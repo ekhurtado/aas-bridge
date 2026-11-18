@@ -1,0 +1,28 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+venv/
+build/
+dist/
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+
+# Local OpenCode files (may contain secrets)
+.ai/cli.json
+.ai/service.json
+
+# Generated migration outputs
+*-adapted.aasx
+
+# IDE
+.idea/
+.vscode/
+
+# Temporary AI configuration tooling
+.ai/tooling/
