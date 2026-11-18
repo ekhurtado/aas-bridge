@@ -104,19 +104,19 @@ The human is the final gate. No agent commits, pushes, tags or publishes.
 
 ## 5. Write ownership
 
-| File / area | Writer | Notes |
-|---|---|---|
-| `PROJECT_BRIEF.md`, `CONSTITUTION.md` | human (architect may edit with `ask`) | Vision/law; changes need a decision |
-| `CONVENTIONS.md`, `ARCHITECTURE.md` | architect (with `ask`) | Standards/design; changes need a decision |
-| `ECOSYSTEM_COMPATIBILITY.md`, `SMIA_RUNTIME_COMPAT_LAYER.md` | architect (with `ask`) | Evidence; append/supersede, never delete |
-| `IMPLEMENTATION_SPEC.md` | architect (full); executor (checkboxes + `Status` only) | Cold-start contract |
-| `contracts/UI_SPEC.md`, `contracts/DESIGN.md` | architect (with `ask`) | UI contract; visual changes need a decision |
-| `ROADMAP.md` | architect (scope); executor (progress at close) | Live plan |
-| `history/DECISIONS.md` | architect (append only) | ADR/TD ledger |
-| `history/ISSUES.md` | executor (append/update); reviewer reports in chat | Open + resolved |
-| `history/SESSION_LOG.md`, `history/specs/` | executor at close, after human approval | Append-only |
-| `aasbridge/`, `tests/`, `docs/`, `pyproject.toml`, `MANIFEST.in` | executor | Only files declared in the SPEC |
-| `agents/`, `skills/`, `templates/` | human (bootstrap) | Static; agents may read |
+| File / area                                                                                           | Writer | Notes |
+|-------------------------------------------------------------------------------------------------------|---|---|
+| `PROJECT_BRIEF.md`, `CONSTITUTION.md`                                                                 | human (architect may edit with `ask`) | Vision/law; changes need a decision |
+| `CONVENTIONS.md`, `ARCHITECTURE.md`                                                                   | architect (with `ask`) | Standards/design; changes need a decision |
+| `ECOSYSTEM_COMPATIBILITY.md`, `SMIA_RUNTIME_COMPAT_LAYER.md`                                          | architect (with `ask`) | Evidence; append/supersede, never delete |
+| `IMPLEMENTATION_SPEC.md`                                                                              | architect (full); executor (checkboxes + `Status` only) | Cold-start contract |
+| `contracts/UI_SPEC.md`, `contracts/DESIGN.md`                                                         | architect (with `ask`) | UI contract; visual changes need a decision |
+| `ROADMAP.md`                                                                                          | architect (scope); executor (progress at close) | Live plan |
+| `history/DECISIONS.md`                                                                                | architect (append only) | ADR/TD ledger |
+| `history/ISSUES.md`                                                                                   | executor (append/update); reviewer reports in chat | Open + resolved |
+| `history/SESSION_LOG.md`, `history/specs/`                                                            | executor at close, after human approval | Append-only |
+| `aas-bridge/`, `tests/`, ...  →  `src/aas_bridge/`, `tests/`, `docs/`, `pyproject.toml`, `MANIFEST.in` | executor | Only files declared in the SPEC (src layout per ADR-024) |
+| `agents/`, `skills/`, `templates/`                                                                    | human (bootstrap) | Static; agents may read |
 
 ## 6. IDs, links and rotation
 
@@ -135,9 +135,13 @@ The human is the final gate. No agent commits, pushes, tags or publishes.
 
 ## 8. Current state
 
-- AI architecture bootstrap: **complete** (2026-11-18).
-- Code: **not started**. `pyproject.toml`, the `aasbridge/` package and tests do not exist yet.
-- Next: the architect creates `SPEC-001` for Phase 1 MVP (detection + upgrade V3.0→V3.1 +
-  evidence gate + minimal bilingual GUI).
-- The repository is a git repo with no initial commit; the human should create one before the
-  first SPEC so the reviewer can use `git diff`.
+- AI architecture bootstrap: complete (2026-11-18).
+- SPEC-001 rev 2 active (2026-11-18): Phase 1 headless core implemented and re-opened for
+  the human-approved rename consolidation — distribution `aas_bridge`, import package
+  `aas_bridge`, CLI `aas_bridge`, canonical `src/aas_bridge/` layout (ADR-024); licence
+  GPL-3.0 (ADR-023). The rev 1 reviewer PASS is invalidated; full §5 re-verification and a
+  reviewer re-audit are required before the close.
+- Decisions: ADR-020 superseded by ADR-023; ADR-022 superseded by ADR-024; TD-001
+  superseded by TD-002.
+- Next: executor completes the rename (reinstall, build, §5, ISS-007), reviewer re-audits,
+  human manual verification; then the close and SPEC-002 (GUI + Docker).

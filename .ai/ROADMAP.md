@@ -13,20 +13,28 @@
 - [x] 0.2 Agents: `architect`, `code-executor` (primary) and `reviewer` (subagent).
 - [x] 0.3 Skills: 13-skill catalog under `.ai/skills/`.
 - [x] 0.4 Audit: file tree and link check; `.ai/tooling/` removed.
-- [ ] 0.5 Human initial commit (pending; needed before the first SPEC for `git diff`).
+- [x] 0.5 Human initial commit (pending; needed before the first SPEC for `git diff`).
 
 ### Phase 1 — MVP: detection + upgrade 3.0→3.1 + evidence gate
 **Priority: very high. Smallest thing that solves today's real incident.**
+**Split into two cycles (2026-11-18): SPEC-001 = headless core + CLI (A1a, A2-A6); SPEC-002 =
+minimal bilingual GUI + Docker (A1b).**
 
-- [ ] A1. Package skeleton: `aasbridge` Python package, core engine + registry layout,
-      Typer CLI, pytest harness. Local web GUI (NiceGUI) implementing
-      `contracts/UI_SPEC.md` + `contracts/DESIGN.md`, bilingual EN/ES, with: upload → version
-      diagnosis → one-click migrate → download `<name>-adapted.aasx`.
+- [ ] A1a. Package skeleton (SPEC-001): `aas_bridge` Python package under `src/` (distribution
+      `aas_bridge`, CLI `aas_bridge` — ADR-024), core engine + registry layout, Typer CLI,
+      pytest harness, packaging (pyproject, MANIFEST, LICENSE, README).
+- [ ] A1b. Local web GUI (NiceGUI) implementing `contracts/UI_SPEC.md` +
+      `contracts/DESIGN.md`, bilingual EN/ES, with: upload → version diagnosis → one-click
+      migrate → download `<name>-adapted.aasx` (SPEC-002; Docker smoke optional while
+      ISS-004 is open).
 
 - [ ] A2. Version detection: inspect AASX XML parts for xmlns declarations (both forms:
       default `xmlns="...aas/3/0"` from PE v3.0 files and prefixed `xmlns:aas=".../3/1"`
       from v3.1 files). Report declared version; distinguish it from versioned external
       IRIs (IEC 61360 `DataSpecificationTemplates/.../3/0`) which are NOT declarations.
+      JSON AAS parts are **detect-only** via `@context` ("undetectable" when absent —
+      basyx-written JSON carries no marker); migration refuses JSON parts fail-closed
+      (TD-001, evidence §4.6). JSON *migration* is deferred to a dedicated evidence cycle.
 - [ ] A3. Upgrade transformation V3.0 → V3.1: re-label namespace **declarations only**;
       rebuild the OPC/ZIP package preserving every other part byte-for-byte (supplementary
       files, OWL ontologies, `.properties`, thumbnails, BOMs, relationships, `[Content_Types].xml`).
@@ -35,14 +43,22 @@
       1) load original with source-dialect basyx (2.0.1) → baseline (object counts, IDs,
       semanticIds); 2) load adapted with target-dialect basyx (2.2.0); 3) compare;
       4) round-trip re-read. A file that does not match its baseline is not emitted.
+      Mechanism: same-venv pip swap in subprocesses, main process never imports basyx,
+      baseline cache + swap lock (ADR-021). A v3.1 input short-circuits to the first-class
+      "already AAS 3.1 — no migration needed" result (TD-001).
 - [ ] A5. Regression corpus: the 6 AASX files of this repo as fixtures with expected
       baselines (v3.0: 22/20/19 objects — AAS 1/1/1, SM 6/4/3, CD 15/15/15;
-      v3.1: 34/32/22 — 2/2/1 AAS, 8/6/4 SM, 24/24/17 CD).
-- [ ] A6. Migration report (JSON + human-readable): versions, rules applied, gate results.
+      v3.1: 34/32/22 — 2/2/1 AAS, 8/6/4 SM, 24/24/17 CD). Expected counts live in tests.
+- [ ] A6. Migration report (JSON with `schema_version` + human-readable console output
+      derived from it, `--lang {en,es}`; golden JSON fixtures).
 
-**Acceptance:** all 6 corpus files pass the gate in both GUI and CLI;
-`aasbridge check <file>` prints the diagnosis in English and Spanish; docker image runs the GUI
-on port 8080 (optional smoke test when Docker is available).
+**Acceptance (SPEC-001, headless):** the 3 v3.0 corpus files migrate and pass the gate via
+the CLI; the 3 v3.1 corpus files are diagnosed "already AAS 3.1 — no migration needed";
+`aas-bridge check <file>` reports the diagnosis in English and Spanish (via `--lang`, TD-002);
+the offline suite, lint, format and build are green; the corpus is untouched and the venv
+ends at basyx `~=2.2`. **Acceptance (SPEC-002, GUI):** the 6 corpus files pass through the
+GUI flow; docker image runs the GUI on port 8080 (optional smoke test when Docker is
+available; `N/A` while ISS-004 is open).
 
 ### Phase 2 — Downgrade 3.1→3.0 (document-aware, plan-then-execute)
 **Priority: high. Needed for partners stuck on older toolchains.**
@@ -69,7 +85,7 @@ a file using `AssetKind=Role` is reported blocking with an explanation.
       `basyx-python-sdk` pin. Cacheable; offline-degraded with visible status.
 - [ ] C2. basyx probe (empirical, no scraping): ephemeral venv per version →
       `import NS_AAS` → dialect matrix. Cache in registry; optional heavyweight layer
-      (`aasbridge-full` image) with cached-matrix fallback in the default image.
+      (`aas-bridge-full` image) with cached-matrix fallback in the default image.
 - [ ] C3. AASX Package Explorer matrix (informative, from release notes; dated).
 - [ ] C4. `doctor` UX: drop a file → "your file is AAS X; SMIA latest reads Y;
       automatic migration available / not needed — look elsewhere (config, XMPP, path)".

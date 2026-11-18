@@ -13,8 +13,8 @@ consumers:
 
 ## Activation Criteria
 
-- **Applies when:** implementing or changing `aasbridge/engine/detect.py`,
-  `aasbridge/engine/transformer.py`, the package reader/writer, namespace detection or the
+- **Applies when:** implementing or changing `../../../src/aas_bridge/engine/detect.py`,
+  `../../../src/aas_bridge/engine/transformer.py`, the package reader/writer, namespace detection or the
   V3.0→V3.1 declaration relabel.
 - **Does NOT apply when:** implementing the basyx probe or evidence gate
   (`basyx-evidence-gate`), the NiceGUI frontend (`nicegui-frontend`) or test design

@@ -24,7 +24,7 @@
 ## 2. Component design (tool)
 
 ```
-aasbridge/
+src/aas_bridge/           # importable package (distribution `aas-bridge`, CLI `aas-bridge`)
 ├── registry/            # Layer 1: the knowledge asset (versioned, offline-first)
 │   ├── artifacts/       #   official IDTA artifacts per version (vendored, hash, CC-BY-4.0)
 │   ├── features/        #   feature catalog per version delta (detection + policy)
@@ -38,7 +38,8 @@ aasbridge/
 │   ├── analyze.py       #   document features vs target constraints → plan
 │   ├── transformer.py   #   package rebuild (zipfile/rels; pyecma376-2 if needed),
 │   │                    #   never mutates the input; writes <name>-adapted.aasx
-│   └── gate.py          #   EVIDENCE GATE (see §3)
+│   ├── gate.py          #   EVIDENCE GATE (see §3)
+│   └── _loaders/        #   basyx subprocess loaders (ADR-021; never imported in-process)
 ├── probes/              # ephemeral-venv basyx probe; PyPI queries; offline-degraded
 ├── cli/                 # Typer: check | doctor | migrate | plan | ingest | export
 └── gui/                 # NiceGUI: thin views over the same core (no logic)
@@ -96,15 +97,16 @@ is the single source of truth for compatibility; SMIA consumes a generated artif
 
 ## 6. Deployment
 
-- **Local**: `aasbridge` → NiceGUI/Uvicorn on 127.0.0.1 (dynamic port) →
+- **Local**: `aas_bridge` → NiceGUI/Uvicorn on 127.0.0.1 (dynamic port) →
   `webbrowser.open()`. Feels like a native app; exit button terminates the process.
-- **Docker**: `docker run -p 8080:8080 ekhurtado/aasbridge` — same code; exit button
+- **Docker**: `docker run -p 8080:8080 ekhurtado/aas-bridge` — same code; exit button
   disabled; files via HTTP upload/download (no volume mounts, no UID/GID issues).
 - **UI contract**: the GUI implements `contracts/UI_SPEC.md` and `contracts/DESIGN.md`; it is
   bilingual EN/ES (language selector, browser-locale default with English fallback), light
   theme, four data states, and no business logic in views.
-- Packaging: `pip install aasbridge` first; PyInstaller binaries deferred (Phase 5).
-  Probe-capable image (`aasbridge-full`) optional; default image ships cached matrix.
+- Packaging: `pip install aas-bridge` first (src layout; ADR-024); PyInstaller binaries
+  deferred (Phase 5). Probe-capable image (`aas-bridge-full`) optional; default image ships
+  cached matrix.
 
 ## 7. Technology choices (rationale in `history/DECISIONS.md`)
 
@@ -144,5 +146,11 @@ One line per decision; full rationale, alternatives and trade-offs live in
 | ADR-017 | Skill catalog of 13 skills | Accepted |
 | ADR-018 | Permissions baseline | Accepted |
 | ADR-019 | Adopt the existing `.ai/` with controlled migration | Accepted |
-| ADR-020 | Python and licence baseline | Accepted |
+| ADR-020 | Python and licence baseline | Accepted — Superseded by ADR-023 |
+| ADR-021 | Evidence gate dialect mechanism: same-venv pip swap in subprocesses | Accepted |
+| ADR-022 | Dependency baseline for SPEC-001 | Accepted — Superseded by ADR-024 |
+| ADR-023 | Project licence is GPL-3.0 | Accepted |
+| ADR-024 | Naming, layout and packaging: `aas_bridge` / `aas_bridge` / `src` layout | Accepted |
+| TD-001 | CLI contract, JSON detect-only scope, and the no-migration result | Accepted — Superseded by TD-002 |
+| TD-002 | CLI contract v2: command `aas_bridge`; refusal-report persistence | Accepted |
 

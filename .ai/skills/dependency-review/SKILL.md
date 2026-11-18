@@ -2,7 +2,7 @@
 name: dependency-review
 description: >
   Use when a feature or diff adds, changes or removes a dependency, including licence and
-  AGPL-3.0 compatibility. Do NOT use for recording an approved decision (use adr-writing),
+  GPL-3.0 compatibility. Do NOT use for recording an approved decision (use adr-writing),
   fetching library docs (context7/web) or editing pyproject.toml (the executor owns the tree).
 version: 1.0.0
 consumers:
@@ -23,7 +23,7 @@ consumers:
 
 - Read `pyproject.toml`, the lock/constraints file (if any), `.ai/CONSTITUTION.md` L2,
   `.ai/CONVENTIONS.md` §7 and the SPEC's dependency section.
-- Project licence: **AGPL-3.0**. Vendored IDTA artifacts: **CC-BY-4.0** with attribution.
+- Project licence: **GPL-3.0**. Vendored IDTA artifacts: **CC-BY-4.0** with attribution.
 - Source of truth for licences: the package metadata (PyPI JSON, the project's LICENSE file) and
   the dependency's repository; network may be unavailable.
 - The human approves the dependency; the architect records the decision; the reviewer verifies
@@ -33,7 +33,7 @@ consumers:
 
 1. **Inventory direct and transitive dependencies.** A permissive direct dependency can pull a
    copyleft-incompatible transitive one.
-2. **Licence compatibility.** Check every dependency against AGPL-3.0: MIT/BSD/Apache-2.0 are
+2. **Licence compatibility.** Check every dependency against GPL-3.0: MIT/BSD/Apache-2.0 are
    compatible; GPL/AGPL are compatible only if the project accepts the combined copyleft
    obligations; proprietary/unknown licences are a stop.
 3. **AGPL obligations.** Network use of a modified AGPL work triggers source-availability
@@ -48,7 +48,7 @@ consumers:
 9. **No unapproved install.** Never add or upgrade a dependency just to make a test pass; the SPEC
    and the decision must approve it.
 10. **Record the verdict.** The decision entry states the licence, the alternative and the
-    AGPL-3.0 conclusion.
+    GPL-3.0 conclusion.
 
 ## Execution Workflow
 

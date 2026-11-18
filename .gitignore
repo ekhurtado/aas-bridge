@@ -24,5 +24,3 @@ htmlcov/
 .idea/
 .vscode/
 
-# Temporary AI configuration tooling
-.ai/tooling/

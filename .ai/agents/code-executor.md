@@ -26,7 +26,7 @@ permissions:
     resource: "*"
     effect: deny
   - action: edit
-    resource: "aasbridge/**"
+    resource: "src/aas_bridge/**"
     effect: allow
   - action: edit
     resource: "tests/**"
@@ -86,7 +86,7 @@ permissions:
     resource: "git diff*"
     effect: allow
   - action: shell
-    resource: "git log*"
+    resource: "git log *"
     effect: allow
   - action: shell
     resource: "git show*"
@@ -199,6 +199,9 @@ permissions:
   - action: external_directory
     resource: "*"
     effect: deny
+  - action: edit
+    resource: "src/**"
+    effect: allow
 ---
 <!-- agent-version: 1.0 | last-reviewed: 2026-11-18 | playbook-basis: v1.4 | patterns: [AR-01, AR-02, AR-03, AR-04, AR-05, AR-07, AR-08, AR-09, EW-01, EW-02, EW-03, EW-04, EW-05, SK-04, TPL-01, TPL-02, TPL-03, TPL-04, TPL-05] -->
 
@@ -251,7 +254,7 @@ permissions:
   - A missing, unreadable or unapproved SPEC, or a `Status` other than `active`.
   - A step, path, schema, interface or verification that is missing or contradictory.
   - A required change outside the SPEC file list or outside the write scope.
-  - A new/changed/forbidden dependency without an accepted decision, or an AGPL-incompatible licence.
+  - A new/changed/forbidden dependency without an accepted decision, or an GPL-incompatible licence.
   - A public interface, AASX layout, CLI contract or JSON schema change not covered by the SPEC.
   - A UI change without `design_ref`, a missing token/state/translation, or a shell change not allowed.
   - A verification that cannot be run with the declared commands or the allowed shell.
@@ -277,6 +280,6 @@ permissions:
 | `verification-gate` | `.ai/skills/verification-gate/SKILL.md` | Implemented (v1.0.0; Cross-Agent) | Cross-Agent | Use when closing a SPEC step or preparing a review handoff requires running the declared build/test/lint/typecheck/grep checks and recording PASS/FAIL/N/A with exact evidence. Do NOT use for test design (use `python-testing`), manual evidence (use `manual-verification`) or the final verdict (use `spec-compliance-audit`). | Shared mechanical evidence layer; the reviewer reuses the same record. |
 
 ## 8. STATE PERSISTENCE & MEMORY
-- **Writes:** `aasbridge/**`, `tests/**`, `docs/**`, `pyproject.toml`, `MANIFEST.in`, `README.md` (only when the SPEC declares it); `.ai/IMPLEMENTATION_SPEC.md` (checkboxes and `Status` only); `.ai/history/ISSUES.md` (append/update); `.ai/history/SESSION_LOG.md` (close only); `.ai/history/specs/**` (close only); `.ai/ROADMAP.md` (progress at close).
+- **Writes:** `../../src/aas_bridge/**`, `tests/**`, `docs/**`, `pyproject.toml`, `MANIFEST.in`, `README.md` (only when the SPEC declares it); `.ai/IMPLEMENTATION_SPEC.md` (checkboxes and `Status` only); `.ai/history/ISSUES.md` (append/update); `.ai/history/SESSION_LOG.md` (close only); `.ai/history/specs/**` (close only); `.ai/ROADMAP.md` (progress at close).
 - **Read-only:** `.ai/CONSTITUTION.md`, `.ai/CONVENTIONS.md`, `.ai/PROJECT_BRIEF.md`, `.ai/ARCHITECTURE.md`, `.ai/ECOSYSTEM_COMPATIBILITY.md`, `.ai/SMIA_RUNTIME_COMPAT_LAYER.md`, `.ai/contracts/**`, `.ai/history/DECISIONS.md`, `.ai/agents/**`, `.ai/skills/**`, `.ai/templates/**`, the corpus folders, and every file outside the SPEC list.
 - **Handoff:** the implementation summary, the reviewer prompt, the manual-verification checklist and the commit-message draft are chat output; the persistent record is the SPEC, the issues, the session log and the archived outcome.

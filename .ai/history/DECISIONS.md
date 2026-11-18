@@ -244,7 +244,7 @@
 - **Revisable when:** the evidence files move to an archive or a separate reference repository.
 
 ### [ADR-020] Python and licence baseline
-- **Date:** 2026-11-18 | **Phase:** 0 | **Status:** Accepted
+- **Date:** 2026-11-18 | **Phase:** 0 | **Status:** Accepted | Superseded by [ADR-023]
 - **Scope:** Process
 - **Alternatives:** uv; pip/venv; Poetry. AGPL-3.0; Apache-2.0; MIT.
 - **Decision:** Python ≥3.11, `pip` + `venv`, `pytest`, `ruff`, `mypy` optional; project licence
@@ -254,6 +254,9 @@
 - **Accepted trade-offs:** no `uv` lockfile speed/reproducibility; AGPL-3.0 imposes copyleft
   obligations on network use.
 - **Revisable when:** the team standardizes on `uv`/Poetry or the licence policy changes.
+- **Note (2026-11-18, ISS-005/D3):** this entry was briefly amended in place to GPL-3.0;
+  the original AGPL-3.0 text above is restored and the licence change is recorded as the
+  superseding ADR-023.
 
 ---
 
@@ -283,7 +286,7 @@
 | Q3 | Ingestion scope: only `.aasx`, or also standalone `.xml`/`.json` + AAS-Repository path? | SMIA reads all three; the runtime layer covers `.aasx`/`.xml` and declares JSON out of scope (no embedded version). |
 | Q4 | In the colleagues' stack, are there v3.0-only consumers of AASX files written back by their tooling (`OrderHistory` writes)? | Fixes the ecosystem write version; decides urgency of downgrade (Phase 2). |
 | Q5 | SMIA Docker images install `smia` from PyPI — is release latency acceptable for shipping the basyx upgrade, or should local builds use `pip install .`? | Affects how Track S reaches Docker users. |
-| Q6 | Project name confirmation: "AAS Bridge" (repo already `AAS_bridge`; all three prior AI sessions converged on a bridge-flavoured name). | Cosmetic but locks the CLI command (`aasbridge`) and package name; check PyPI/GitHub availability before the first release. |
+| Q6 | Project name confirmation: "AAS Bridge" (repo already `AAS_bridge`; all three prior AI sessions converged on a bridge-flavoured name). | Cosmetic but locks the CLI command (`aas_bridge`) and package name; check PyPI/GitHub availability before the first release. |
 
 ## Sources of the session (inputs)
 
@@ -298,3 +301,177 @@
 - Local empirical probes on the 6-file corpus (basyx 2.0.1 and ephemeral 2.2.0).
 - AI architecture bootstrap: `.ai/tooling/` (temporary; removed after sync), Playbook v1.4,
   configurator methodology v1.0, agent generator v3.1.
+
+---
+
+## Phase 1 planning 2026-11-18 — SPEC-001 (ADR-021, ADR-022, TD-001)
+
+> Debated with and approved by the human on 2026-11-18 (4 rounds: cycle structure, gate
+> mechanism, CLI/JSON/report, tests/packaging).
+
+### [ADR-021] Evidence gate dialect mechanism: same-venv pip swap in subprocesses
+- **Date:** 2026-11-18 | **Phase:** 1 | **Status:** Accepted
+- **Scope:** Core (Feature: evidence gate)
+- **Alternatives:** (A) tool-owned persistent second venv with basyx 2.0.1; (B) pip swap in
+  the project venv orchestrated by the tool; (C) precomputed baseline fixtures.
+- **Decision:** Option B, chosen by the human: the tool swaps `basyx-python-sdk`
+  (`==2.0.1` ↔ `~=2.2`) in the project venv. Mitigations mandated by the design: the main
+  process **never imports basyx** (detection/transformation are pure zipfile/XML; every basyx
+  load runs in a `python -m` subprocess after the corresponding `pip install`); the venv is
+  restored to `~=2.2` in a `finally` block; baseline results are cached by
+  (file sha256, basyx version) so swaps are rare; gate executions are serialized with a lock
+  file; pip/subprocess failures raise an actionable `ProbeError` naming both versions.
+- **Justification:** the human owns the single project venv and accepts the trade-off; the
+  no-import-in-main-process design removes the module-cache and GUI-race hazards and makes
+  the mechanism safe for the SPEC-002 GUI running in the same venv. L1-9 is preserved: basyx
+  remains the only validator; the target dialect is imported from the installed basyx
+  (`NS_AAS` via a dialect-probe subprocess), never hardcoded.
+- **Accepted trade-offs:** the venv is temporarily mutated (restored on exit; a crash
+  mid-swap leaves 2.0.1 installed with an explicit recovery command in the error); the first
+  baseline for a new file may need network for pip — a documented, human-accepted deviation
+  from strict L1-14 offline-first (`check` and all offline features stay network-free; the
+  baseline is cached afterwards); concurrent external pip use of the same venv during a swap
+  can conflict (mitigated by the lock, not eliminated).
+- **Revisable when:** the SPEC-002 GUI or distribution (Docker/PyPI) makes swap serialization
+  or first-run network unacceptable — then revisit option A (persistent probe venv) or a
+  vendored wheelhouse.
+
+### [ADR-022] Dependency baseline for SPEC-001
+- **Date:** 2026-11-18 | **Phase:** 1 | **Status:** Accepted | Superseded by [ADR-024]
+- **Scope:** Data (dependencies)
+- **Alternatives:** (A) minimal set now, GUI/validators later with their own decisions;
+  (B) include nicegui and aas-core already; (C) declare unused dependencies "for later".
+- **Decision:** Option A. Runtime: `basyx-python-sdk ~= 2.2` (tested 2.2.0), `typer ~= 0.29`
+  (tested 0.29.2), `pyecma376-2 >= 1.0.2` (tested 1.0.2; used directly for OPC I/O, so
+  declared explicitly instead of relying on basyx's transitive pin). Dev extras:
+  `pytest >= 9.0.3` (minimum set by CVE-2025-71176 / GHSA-6w46-j5rx-g56g, fixed in 9.0.3),
+  `ruff >= 0.16`, `build >= 1.4.0`, `mypy >= 1.15` (optional). NiceGUI joins in SPEC-002 as
+  the `gui` extra; aas-core is deferred (basyx is the only validator, L1-9).
+- **Justification:** `dependency-review` verdict APPROVE (2026-11-18, sources: PyPI JSON and
+  GitHub API, see `ECOSYSTEM_COMPATIBILITY.md` §4.6): all licences MIT/Apache-2.0/BSD/ISC —
+  GPL-3.0-compatible, including the transitive trees (lxml BSD-3, python-dateutil BSD-3,
+  pydantic MIT, rich MIT, shellingham ISC, colorama BSD). No known vulnerabilities except
+  the pytest advisory, addressed by the pin. GPL-3.0 network-use source obligations apply
+  to the project itself and are accepted.
+- **Accepted trade-offs:** version ranges need retesting on bumps; `pyecma376-2` is a small,
+  RWTH-maintained package (Production/Stable, Apache-2.0).
+- **Revisable when:** SPEC-002 adds nicegui; a pin must move; or a transitive conflict with
+  SMIA-style environments appears.
+
+### [TD-001] CLI contract, JSON detect-only scope, and the no-migration result
+- **Date:** 2026-11-18 | **Phase:** 1 | **Status:** Accepted | Superseded by [TD-002]
+- **Scope:** Interface (CLI + detection semantics)
+- **Alternatives:** CLI language: always print EN+ES together vs `--lang` flag (chosen).
+  JSON parts: unsupported/fail-closed total vs detect-only (chosen) vs full migration now.
+  v3.1 inputs: emit an identical no-op copy vs first-class "no migration needed" (chosen).
+- **Decision:** `aas-bridge check <file>` and `aas-bridge migrate <file>` with
+  `--lang {en,es}` (system-locale default, `en` fallback); the roadmap acceptance "prints
+  the diagnosis in English and Spanish" is interpreted as *available in both via the flag*.
+  JSON AASX parts are **detect-only**: the declared version is reported from `@context` when
+  present ("undetectable" otherwise — basyx-written JSON has no marker), and migration
+  refuses them fail-closed with an actionable message. A v3.1 input is a first-class success
+  ("already AAS 3.1 — no migration needed"): exit 0, no output file, no gate run. Exit codes
+  per `CONVENTIONS.md` §2.
+- **Justification:** bilingual-always output is noisy for batch use; JSON migration cannot be
+  evidenced by the current gate (basyx ignores `@context`, facts J2-J4 in
+  `ECOSYSTEM_COMPATIBILITY.md` §4.6) and shipping it would sell an unproven stamp — the core
+  asset's credibility; emitting a byte-identical copy for v3.1 files contradicts
+  never-mutate/no-redundant-output and adds no value.
+- **Accepted trade-offs:** JSON authors get a diagnosis but no fix until the dedicated JSON
+  evidence cycle lands (roadmap); `--lang` locks the public CLI contract (L2-18).
+- **Revisable when:** the JSON evidence cycle (probe + fixtures + possible aas-core schema
+  decision) is approved, or user feedback demands always-bilingual console output.
+
+---
+
+## Rename consolidation 2026-11-18 — SPEC-001 rev 2 (ADR-023, ADR-024, TD-002)
+
+> Human-approved on 2026-11-18 (rename Option A: distribution `aas_bridge`, package
+> `aas_bridge`, CLI `aas_bridge`, `src/` layout; licence stays GPL-3.0 — "keep GPL, like the
+> LICENSE file"). Closes ISS-005 (D3 licence trail) and records the reviewer loop-1 decisions
+> (ISS-007 M2).
+
+### [ADR-023] Project licence is GPL-3.0
+- **Date:** 2026-11-18 | **Phase:** 1 | **Status:** Accepted
+- **Scope:** Process (licensing)
+- **Alternatives:** (A) keep AGPL-3.0 (ADR-020); (B) GPL-3.0; (C) Apache-2.0/MIT (permissive).
+- **Decision:** Option B, confirmed by the human ("keep GPL, like the LICENSE file"):
+  the project licence is **GPL-3.0**. `LICENSE` carries the full GPL-3.0 text;
+  `pyproject.toml` classifiers/SPDX are aligned (executor, reviewer D1).
+- **Justification:** the licence was changed in place mid-cycle without a decision trail
+  (reviewer finding D3, ISS-005); the trail is corrected here: ADR-020's original AGPL-3.0
+  text is restored and marked superseded, and the human confirms GPL-3.0 as the intended
+  licence. GPL-3.0 keeps strong copyleft. The `dependency-review` verdict (ADR-022/ADR-024
+  baseline) is unaffected: MIT/Apache-2.0/BSD/ISC dependencies remain GPL-3.0-compatible.
+  GPL-3.0 contains **no network-use provision** (that clause is AGPL-specific): source
+  obligations trigger on distribution/conveyance, not on offering the tool over a network.
+  Vendored IDTA artifacts stay CC-BY-4.0 with attribution (one-way compatible with GPL-3.0
+  distribution). CONSTITUTION L2-15 and the README already align with GPL-3.0.
+- **Accepted trade-offs:** stronger copyleft obligations on any binary/source distribution of
+  the tool; dropping the AGPL network-use clause means network service use no longer
+  triggers source availability — relevant only if the tool is ever offered as a service.
+- **Revisable when:** a distribution channel or partner requires different terms, or the
+  human changes the licence policy (then supersede with a new dated ADR, never in place).
+
+### [ADR-024] Naming, layout and packaging: `aas_bridge` / `aas_bridge` / src layout
+- **Date:** 2026-11-18 | **Phase:** 1 | **Status:** Accepted
+- **Scope:** Interface + Process (packaging); supersedes [ADR-022] and carries its dependency
+  baseline forward unchanged.
+- **Alternatives:** (A) keep `aas_bridge` (hyphenless distribution + flat layout);
+  (B) distribution `aas_bridge`, import package `aas_bridge`, CLI `aas_bridge`, `src/`
+  layout (chosen); (C) underscore everywhere (`aas_bridge` as distribution name too).
+- **Decision:** Option A of the human's rename proposal, approved 2026-11-18:
+  - Distribution/PyPI name: **`aas_bridge`**.
+  - Importable package: **`aas_bridge`** (a hyphen is not valid in a Python package/import
+    name; the human's `../../src/aas_bridge/` folder is consolidated to `src/aas_bridge/`).
+  - CLI command: **`aas_bridge`** (replaces `aas_bridge`; public interface change → TD-002).
+  - Layout: **`src/aas_bridge/`** (canonical src layout; setuptools `package-dir = {"" =
+    "src"}`, `packages.find where = ["src"], include = ["aas_bridge*"]`; ruff `src =
+    ["src", "tests"]` with a per-file-ignore for `src/aas_bridge/cli/main.py`).
+  - Version banner: `"aas-bridge {version}"`.
+  - **Unchanged identifiers:** `aas-bridge_CACHE_DIR` and the default cache dir path
+    (`%LOCALAPPDATA%/aas-bridge/cache` / `~/.cache/aas-bridge`) — renaming them would
+    silently invalidate cached baselines; they are internal, not public interface.
+- **Justification:** a hyphen cannot appear in a Python module/import path, so `aas_bridge`
+  as an importable package is invalid (the executor verified `ModuleNotFoundError`); the src
+  layout is canonical packaging practice and prevents accidental imports of the working
+  directory; PEP 503 normalizes `aas_bridge` and `aas_bridge` to the same PyPI key, so the
+  hyphenated distribution name is the readable canonical form. The ADR-022 dependency
+  baseline (runtime `basyx-python-sdk ~= 2.2` / `typer ~= 0.29` / `pyecma376-2 >= 1.0.2`;
+  dev `pytest >= 9.0.3` incl. the CVE-2025-71176 pin, `ruff >= 0.16`, `build >= 1.4.0`,
+  `mypy >= 1.15`; licences MIT/Apache-2.0/BSD/ISC, GPL-3.0-compatible; verdict APPROVE,
+  2026-11-18) is carried forward unchanged. Note: ADR-022's justification text had also been
+  amended in place during the licence trail (AGPL → GPL wording); its operative content is
+  restated here so the superseded entry needs no further edits.
+- **Accepted trade-offs:** public interface change (CLI rename) → every user/venv must
+  reinstall and any script calling `aas_bridge` must be updated (TD-002); docs, contracts,
+  skills and agent definitions were re-aligned in this consolidation; one extra `pip
+  install -e` + rebuild cycle in SPEC-001 rev 2.
+- **Revisable when:** a PyPI name conflict appears at first publish, or tooling imposes a
+  different naming/layout constraint.
+
+### [TD-002] CLI contract v2: command `aas_bridge`; refusal-report persistence
+- **Date:** 2026-11-18 | **Phase:** 1 | **Status:** Accepted
+- **Scope:** Interface (CLI + detection semantics); supersedes [TD-001] (the command name
+  part; all other semantics carried forward).
+- **Alternatives:** (A) keep the `aas_bridge` command and change only import/layout;
+  (B) rename the command to `aas_bridge` (chosen, human-approved); refused-report handling:
+  (i) discard refusal evidence, (ii) persist it with `--report` (chosen).
+- **Decision:** the CLI is invoked as **`aas_bridge`** (`aas-bridge --version` prints
+  `"aas-bridge 0.1.0"`). Everything else from TD-001 is unchanged and remains in force:
+  `check <file>` / `migrate <file>`, `--lang {en,es}` (system-locale default, `en` fallback),
+  `--report <path>`, exit codes per `CONVENTIONS.md` §2 (0/1/2/3/4), JSON AAS parts
+  **detect-only** (fail-closed migration refusal), and the first-class "already AAS 3.1 —
+  no migration needed" result (exit 0, no output file, no gate run). **New:** `migrate
+  --report <path>` also persists the report when the gate refuses (outcome `refused`, gate
+  `fail`), so fail-closed evidence is retained on disk (resolves ISS-007/M2); the report
+  schema stays `schema_version: 1` with no new keys. This is a public interface change
+  recorded under L2-18.
+- **Justification:** the command name follows the distribution name for a consistent UX
+  (ADR-024); a refused migration is evidence — the gate's value is exactly that it proves
+  and explains refusals, so discarding the refusal report contradicts the fail-closed,
+  evidence-first design (G2, L1-16).
+- **Accepted trade-offs:** users of the pre-rename builds must reinstall/update scripts;
+  a `--report` file may now exist with outcome `refused` (tests cover it).
+- **Revisable when:** the JSON evidence cycle lands (schema 2) or user feedback demands
+  always-bilingual console output.

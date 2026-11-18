@@ -47,7 +47,7 @@
   `ARCHITECTURE.md` (links), `ROADMAP.md` (Phase 0), `IMPLEMENTATION_SPEC.md`,
   `contracts/UI_SPEC.md`, `contracts/DESIGN.md`, `history/DECISIONS.md`, `history/ISSUES.md`,
   `history/SESSION_LOG.md`, `history/specs/README.md`, `templates/*`, `agents/*`, `skills/*`,
-  root `AGENTS.md`.
+  root `../AGENTS.md`.
 - **Checks:** `PJ-AUD-01..06` PASS — 38 expected files, 13 skills, 3 agents, consumers
   aligned; no unresolved placeholders; local links valid; `external_directory: * deny` present
   in all three agents; no secrets in context (the local harness files `.ai/cli.json` and

@@ -1,6 +1,6 @@
 # AAS Bridge — Agent Instructions
 
-> Read `.ai/README.md` first. `CONSTITUTION.md` wins on any conflict with this file.
+> Read `README.md` first. `CONSTITUTION.md` wins on any conflict with this file.
 > This file is a harness entry point, not project law. Do not duplicate law here.
 
 ## Language
@@ -13,9 +13,9 @@
 
 | Agent | Mode | Path | Purpose |
 |---|---|---|---|
-| `architect` | primary | `.ai/agents/architect.md` | Debates with the human, writes the approved `IMPLEMENTATION_SPEC.md`, decisions, roadmap and UI contracts. Never writes source code. |
-| `code-executor` | primary | `.ai/agents/code-executor.md` | Implements the SPEC, runs the declared verification, invokes the `reviewer` subagent and updates the `.ai/` state. |
-| `reviewer` | subagent | `.ai/agents/reviewer.md` | Read-only audit of the executor handoff against the SPEC and diff; returns `PASS`/`FAIL` with evidence. |
+| `architect` | primary | `agents/architect.md` | Debates with the human, writes the approved `IMPLEMENTATION_SPEC.md`, decisions, roadmap and UI contracts. Never writes source code. |
+| `code-executor` | primary | `agents/code-executor.md` | Implements the SPEC, runs the declared verification, invokes the `reviewer` subagent and updates the `` state. |
+| `reviewer` | subagent | `agents/reviewer.md` | Read-only audit of the executor handoff against the SPEC and diff; returns `PASS`/`FAIL` with evidence. |
 
 ## Available Skills
 
@@ -65,6 +65,6 @@
 
 - Agents never commit, push, tag, publish or open pull requests. The human owns git and releases.
 - `external_directory: * deny` is the baseline for every agent.
-- The executor writes only the SPEC file list plus the declared `.ai/` state files. The architect never writes source code.
-- Never write credentials, tokens, private keys or personal data. `.ai/service.json` and `.ai/cli.json` are local harness files and must never be committed.
-- Scope: `aasbridge/` (when created), `tests/`, `docs/`, `pyproject.toml`, `MANIFEST.in`, `.ai/`. The corpus folders `aas_v3-0/` and `aas_v3-1/` are **read-only**.
+- The executor writes only the SPEC file list plus the declared `` state files. The architect never writes source code.
+- Never write credentials, tokens, private keys or personal data. `service.json` and `cli.json` are local harness files and must never be committed.
+`- Scope: src/aas_bridge/ (when created), ...`  →  `- Scope: src/aas_bridge/, tests/, docs/, pyproject.toml, MANIFEST.in, .ai/. The corpus folders aas_v3-0/ and aas_v3-1/ are read-only.`

@@ -1,0 +1,64 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "aas-bridge"
+version = "0.1.0"
+description = "Detect, diagnose and migrate AASX packages across AAS metamodel versions."
+readme = "README.md"
+requires-python = ">=3.11"
+license = { file = "LICENSE" }
+keywords = ["AAS", "AASX", "Asset Administration Shell", "basyx", "migration"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Manufacturing",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "License :: OSI Approved :: GNU General Public License v3",
+    "Operating System :: OS Independent",
+    "Topic :: Scientific/Engineering :: Interface Engine/Protocol Translator",
+]
+dependencies = [
+    "basyx-python-sdk~=2.2",
+    "typer~=0.29",
+    "pyecma376-2>=1.0.2",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=9.0.3",
+    "ruff>=0.16",
+    "build>=1.4.0",
+    "mypy>=1.15",
+]
+
+[project.scripts]
+aas-bridge = "aas_bridge.cli.main:app"
+
+[tool.setuptools]
+package-dir = { "" = "src" }
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["aas_bridge*"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM"]
+
+[tool.ruff.lint.per-file-ignores]
+# Typer requires option/argument definitions in function defaults (B008).
+"src/aas_bridge/cli/main.py" = ["B008"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = [
+    "integration: end-to-end checks that may swap the installed basyx version and use the network",
+    "network: checks that require network access; never part of the default suite",
+]

@@ -96,8 +96,8 @@ native and Docker, zero configuration.
 | Validators | `aas-core3.0` / `aas-core3.1` (3.2 when stable) |
 | GUI / CLI | NiceGUI (bilingual EN/ES) / Typer |
 | Package I/O | `zipfile` + explicit relationships; `pyecma376-2` if needed |
-| Distribution | `pip install aasbridge`; Docker optional |
-| Licence | **AGPL-3.0**; vendored IDTA artifacts CC-BY-4.0 with attribution |
+| Distribution | `pip install aas-bridge` (distribution `aas_bridge`, package `aas_bridge`, src layout — ADR-024); Docker optional |
+| Licence | **GPL-3.0**; vendored IDTA artifacts CC-BY-4.0 with attribution |
 
 ## 8. Absolute constraints (never violate)
 
@@ -108,7 +108,7 @@ native and Docker, zero configuration.
 5. **No modification of basyx-python-sdk.**
 6. **Offline-first:** the vendored registry is the default; online features are additive and
    visibly degraded.
-7. **Licensing:** AGPL-3.0; compatible dependencies; CC-BY-4.0 attribution for vendored artifacts.
+7. **Licensing:** GPL-3.0; compatible dependencies; CC-BY-4.0 attribution for vendored artifacts.
 8. **No secrets; the corpus (`aas_v3-0/`, `aas_v3-1/`) is read-only; the UI is a thin layer over
    the headless core and is bilingual EN/ES.**
 

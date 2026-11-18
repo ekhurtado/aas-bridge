@@ -421,7 +421,7 @@ El **destino nunca se escribe a mano**: se lee de basyx en runtime (`NS_AAS` imp
 
 ```python
 SWAP_SAFE_SOURCES = {
-    "https://admin-shell.io/aas/3/0": True,   # verificado contra changelog IDTA: aditivo
+    "https://admin-shell.io/aas/3/0": True,  # verificado contra changelog IDTA: aditivo
 }
 # destino implícito: .../3/1 (lo que declare el basyx pineado)
 ```
@@ -551,18 +551,21 @@ SWAP_SAFE_SOURCE_NAMESPACES = {
 # DataSpecificationTemplate reference ".../DataSpecificationIec61360/3/0") or semanticIds
 # containing the same URI in a value position are NOT declarations and are left untouched.
 _AAS_NAMESPACE_DECLARATION = re.compile(
-    rb'xmlns(?::[A-Za-z_][\w.-]*)?="(https://admin-shell\.io/aas/3/\d)"')
+    rb'xmlns(?::[A-Za-z_][\w.-]*)?="(https://admin-shell\.io/aas/3/\d)"'
+)
 
 
 class AASVersionIncompatibleError(CriticalError):
     """The AAS model declares an AAS metamodel version that this SMIA cannot read."""
+
     def __init__(self, detected: Set[str]):
         self.detected_versions = sorted(detected)
         super().__init__(
             "The AAS model file declares AAS metamodel version(s) [{}], but this SMIA reads "
             "AAS [{}] (as implemented by its pinned basyx-python-sdk). Either migrate the file "
             "with the AASX migration tool, or upgrade the basyx-python-sdk version of SMIA."
-            "".format(", ".join(self.detected_versions), TARGET_AAS_NAMESPACE))
+            "".format(", ".join(self.detected_versions), TARGET_AAS_NAMESPACE)
+        )
 
 
 def _detect_namespaces_in_bytes(data: bytes) -> Set[str]:
@@ -584,16 +587,18 @@ def detect_aas_namespaces_in_aasx(aasx_bytes: bytes) -> Set[str]:
     namespaces = set()
     with zipfile.ZipFile(io.BytesIO(aasx_bytes)) as package:
         for part_name in package.namelist():
-            if part_name.lower().endswith('.xml'):  # AAS data parts + [Content_Types].xml
+            if part_name.lower().endswith(".xml"):  # AAS data parts + [Content_Types].xml
                 namespaces |= _detect_namespaces_in_bytes(package.read(part_name))
     return namespaces
 
 
 def _swap_namespace_declarations(data: bytes, source_ns: str, target_ns: str) -> bytes:
     """Re-label every AAS namespace *declaration* in the XML bytes, leaving the rest untouched."""
+
     def replacement(match):
         prefix = match.group(1) or b""
-        return b'xmlns' + prefix + b'="' + target_ns.encode() + b'"'
+        return b"xmlns" + prefix + b'="' + target_ns.encode() + b'"'
+
     pattern = re.compile(rb'xmlns(?::[A-Za-z_][\w.-]*)?="' + re.escape(source_ns.encode()) + rb'"')
     return pattern.sub(replacement, data)
 
@@ -612,13 +617,14 @@ def _relabel_aasx_in_memory(aasx_bytes: bytes, detected: Set[str]) -> bytes:
     Returns:
         bytes: raw content of the re-labelled AASX package.
     """
-    sources_to_swap = [ns for ns in detected
-                        if ns in SWAP_SAFE_SOURCE_NAMESPACES and ns != TARGET_AAS_NAMESPACE]
+    sources_to_swap = [
+        ns for ns in detected if ns in SWAP_SAFE_SOURCE_NAMESPACES and ns != TARGET_AAS_NAMESPACE
+    ]
     output = io.BytesIO()
-    with zipfile.ZipFile(io.BytesIO(aasx_bytes)) as src, zipfile.ZipFile(output, 'w') as dst:
+    with zipfile.ZipFile(io.BytesIO(aasx_bytes)) as src, zipfile.ZipFile(output, "w") as dst:
         for info in src.infolist():
             data = src.read(info.filename)
-            if info.filename.lower().endswith('.xml'):
+            if info.filename.lower().endswith(".xml"):
                 for source_ns in sources_to_swap:
                     data = _swap_namespace_declarations(data, source_ns, TARGET_AAS_NAMESPACE)
             # ZipInfo is rebuilt (instead of reusing the source one) to avoid stale header
@@ -645,7 +651,7 @@ def prepare_aasx_for_reading(aasx_path: str) -> Union[str, io.BytesIO]:
         Union[str, io.BytesIO]: the path of the original package, or an in-memory
         re-labelled copy. AASXReader accepts both.
     """
-    with open(aasx_path, 'rb') as aasx_file:
+    with open(aasx_path, "rb") as aasx_file:
         aasx_bytes = aasx_file.read()
 
     detected = detect_aas_namespaces_in_aasx(aasx_bytes)
@@ -663,10 +669,12 @@ def prepare_aasx_for_reading(aasx_path: str) -> Union[str, io.BytesIO]:
     if detected == {TARGET_AAS_NAMESPACE}:
         return aasx_path  # native dialect: nothing to do
 
-    _logger.info("The AASX package declares AAS %s, older than the supported AAS %s. Since the "
-                 "transition is verified as additive-only, it is being re-labelled in memory "
-                 "before parsing (the original file is NOT modified)."
-                 "".format(sorted(detected), TARGET_AAS_NAMESPACE))
+    _logger.info(
+        "The AASX package declares AAS %s, older than the supported AAS %s. Since the "
+        "transition is verified as additive-only, it is being re-labelled in memory "
+        "before parsing (the original file is NOT modified)."
+        "".format(sorted(detected), TARGET_AAS_NAMESPACE)
+    )
     return io.BytesIO(_relabel_aasx_in_memory(aasx_bytes, detected))
 
 
@@ -675,7 +683,7 @@ def prepare_xml_for_reading(xml_path: str) -> Union[str, bytes]:
     Same as prepare_aasx_for_reading, but for a standalone AAS XML file. Returns either the
     original path or the re-labelled XML bytes (read_aas_xml_file accepts both).
     """
-    with open(xml_path, 'rb') as xml_file:
+    with open(xml_path, "rb") as xml_file:
         xml_bytes = xml_file.read()
 
     detected = _detect_namespaces_in_bytes(xml_bytes)
@@ -693,8 +701,10 @@ def prepare_xml_for_reading(xml_path: str) -> Union[str, bytes]:
     for source_ns in sorted(detected):
         if source_ns != TARGET_AAS_NAMESPACE:
             xml_bytes = _swap_namespace_declarations(xml_bytes, source_ns, TARGET_AAS_NAMESPACE)
-    _logger.info("The AAS XML file declares AAS %s and has been re-labelled in memory to "
-                 "AAS %s before parsing.".format(sorted(detected), TARGET_AAS_NAMESPACE))
+    _logger.info(
+        "The AAS XML file declares AAS %s and has been re-labelled in memory to "
+        "AAS %s before parsing.".format(sorted(detected), TARGET_AAS_NAMESPACE)
+    )
     return xml_bytes
 ```
 
@@ -703,54 +713,59 @@ def prepare_xml_for_reading(xml_path: str) -> Union[str, bytes]:
 Solo cambian las ramas `.xml` y `.aasx` (marcado con `# NEW`), y el `except` que deja pasar el nuevo error:
 
 ```python
-    @staticmethod
-    def read_aas_model_object_store():
-        """
-        This method reads the AAS model according to the selected serialization format.
+@staticmethod
+def read_aas_model_object_store():
+    """
+    This method reads the AAS model according to the selected serialization format.
 
-        Returns:
-            basyx.aas.model.DictObjectStore:  object with all Python elements of the AAS model.
-        """
-        object_store = None
-        aas_model_file_path = properties_file_utils.get_aas_model_filepath()
-        aas_model_file_name, aas_model_file_extension = path.splitext(SMIAGeneralInfo.CM_AAS_MODEL_FILENAME)
-        if aas_model_file_name != '' and aas_model_file_extension != '':
-            try:
-                # The AAS model is read depending on the serialization format (extension of the AAS model file)
-                if aas_model_file_extension == '.json':
-                    # NOTE: JSON serialization carries no embedded metamodel version, so no
-                    # version detection is possible at this level (the AAS Repository serves
-                    # the model in the agreed dialect).
-                    object_store = basyx.aas.adapter.json.read_aas_json_file(aas_model_file_path)
-                elif aas_model_file_extension == '.xml':
-                    # NEW: version-aware ingestion of standalone AAS XML files
-                    xml_source = AASVersionCompat.prepare_xml_for_reading(aas_model_file_path)
-                    object_store = basyx.aas.adapter.xml.read_aas_xml_file(xml_source)
-                elif aas_model_file_extension == '.aasx':
-                    # NEW: version-aware ingestion of the AASX package
-                    aasx_source = AASVersionCompat.prepare_aasx_for_reading(aas_model_file_path)
-                    with aasx.AASXReader(aasx_source) as reader:
-                        # Read all contained AAS objects and all referenced auxiliary files
-                        object_store = model.DictObjectStore()  # TODO upgrade to DictIdentifiableStore (basyx >= 2.1)
-                        suppl_file_store = aasx.DictSupplementaryFileContainer()
-                        reader.read_into(object_store=object_store,
-                                         file_store=suppl_file_store)
-            except CriticalError:
-                # NEW: version incompatibility is a critical, self-explanatory error
-                raise
-            except ValueError as e:
-                _logger.error("Failed to read AAS model: invalid file.")
-                _logger.error(e)
-                raise CriticalError("Failed to read AAS model: invalid file.")
-        elif SMIAGeneralInfo.CM_AAS_ID != '':
-            # In this case the AAS ID is defined, so it need to be got the AAS object from an Infrastructure Service
-            return 'FromAASId'
+    Returns:
+        basyx.aas.model.DictObjectStore:  object with all Python elements of the AAS model.
+    """
+    object_store = None
+    aas_model_file_path = properties_file_utils.get_aas_model_filepath()
+    aas_model_file_name, aas_model_file_extension = path.splitext(
+        SMIAGeneralInfo.CM_AAS_MODEL_FILENAME
+    )
+    if aas_model_file_name != "" and aas_model_file_extension != "":
+        try:
+            # The AAS model is read depending on the serialization format (extension of the AAS model file)
+            if aas_model_file_extension == ".json":
+                # NOTE: JSON serialization carries no embedded metamodel version, so no
+                # version detection is possible at this level (the AAS Repository serves
+                # the model in the agreed dialect).
+                object_store = basyx.aas.adapter.json.read_aas_json_file(aas_model_file_path)
+            elif aas_model_file_extension == ".xml":
+                # NEW: version-aware ingestion of standalone AAS XML files
+                xml_source = AASVersionCompat.prepare_xml_for_reading(aas_model_file_path)
+                object_store = basyx.aas.adapter.xml.read_aas_xml_file(xml_source)
+            elif aas_model_file_extension == ".aasx":
+                # NEW: version-aware ingestion of the AASX package
+                aasx_source = AASVersionCompat.prepare_aasx_for_reading(aas_model_file_path)
+                with aasx.AASXReader(aasx_source) as reader:
+                    # Read all contained AAS objects and all referenced auxiliary files
+                    object_store = (
+                        model.DictObjectStore()
+                    )  # TODO upgrade to DictIdentifiableStore (basyx >= 2.1)
+                    suppl_file_store = aasx.DictSupplementaryFileContainer()
+                    reader.read_into(object_store=object_store, file_store=suppl_file_store)
+        except CriticalError:
+            # NEW: version incompatibility is a critical, self-explanatory error
+            raise
+        except ValueError as e:
+            _logger.error("Failed to read AAS model: invalid file.")
+            _logger.error(e)
+            raise CriticalError("Failed to read AAS model: invalid file.")
+    elif SMIAGeneralInfo.CM_AAS_ID != "":
+        # In this case the AAS ID is defined, so it need to be got the AAS object from an Infrastructure Service
+        return "FromAASId"
 
-        if object_store is None or len(object_store) == 0:
-            raise CriticalError("The AAS model is not valid. It is not possible to read and obtain elements of the AAS "
-                                "metamodel.")
-        else:
-            return object_store
+    if object_store is None or len(object_store) == 0:
+        raise CriticalError(
+            "The AAS model is not valid. It is not possible to read and obtain elements of the AAS "
+            "metamodel."
+        )
+    else:
+        return object_store
 ```
 
 (con `from smia.aas_model.aas_version_compat import AASVersionCompat` en los imports del módulo).

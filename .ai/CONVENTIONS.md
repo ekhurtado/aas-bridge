@@ -15,27 +15,28 @@
 | Python | Private helpers | leading underscore | `_iter_xml_parts()` |
 | Files / folders | Source tree | `snake_case` | `tests/fixtures/golden/` |
 | Skills | Skill IDs | `kebab-case` | `basyx-evidence-gate` |
-| CLI | Commands / flags | `kebab-case` | `aasbridge doctor --file` |
+| CLI | Commands / flags | `kebab-case` | `aas-bridge doctor --file` |
 | JSON | Report keys | `snake_case`, stable | `detected_version` |
-| Environment | Variables | `AASBRIDGE_*` | `AASBRIDGE_CACHE_DIR` |
+| Environment | Variables | `aas-bridge_*` | `aas-bridge_CACHE_DIR` |
 | AAS | Model identifiers | preserve the standard spelling | `AssetKind`, `idShort` |
 
-Layout (created by SPEC-001, not by the bootstrap):
+Layout (canonical, per ADR-024; SPEC-001 rev 2):
 
 ```text
-aasbridge/
-├── registry/            # Layer 1: knowledge asset (artifacts, features, rules, ecosystem)
-├── engine/              # Layer 2: headless core (detect, analyze, transformer, gate)
-├── probes/              # ephemeral-venv basyx probe; PyPI queries; offline-degraded
-├── cli/                 # Typer commands
-└── gui/                 # NiceGUI views over the same core
+src/
+└── aas_bridge/            # importable package (distribution `aas-bridge`, CLI `aas-bridge`)
+    ├── registry/          # Layer 1: knowledge asset (artifacts, features, rules, ecosystem)
+    ├── engine/            # Layer 2: headless core (detect, analyze, transformer, gate)
+    │   └── _loaders/      # basyx subprocess loaders (never imported by the main process)
+    ├── cli/               # Typer commands
+    └── gui/               # NiceGUI views over the same core (SPEC-002)
 tests/
 ├── unit/
 ├── integration/
-└── fixtures/            # expected baselines, golden JSON reports
-aas_v3-0/                # READ-ONLY corpus (3 AAS V3.0 files)
-aas_v3-1/                # READ-ONLY corpus (3 AAS V3.1 files)
-pyproject.toml
+└── fixtures/              # expected baselines, golden JSON reports
+aas_v3-0/                  # READ-ONLY corpus (3 AAS V3.0 files)
+aas_v3-1/                  # READ-ONLY corpus (3 AAS V3.1 files)
+pyproject.toml             # src-layout packaging (package-dir = src)
 MANIFEST.in
 ```
 
@@ -62,7 +63,7 @@ Rules:
 
 ## 3. Error Handling & Edge Cases
 
-- Custom exception hierarchy rooted at `AASBridgeError`:
+- Custom exception hierarchy rooted at `aas-bridgeError`:
   `DetectionError`, `MigrationError`, `EvidenceGateError`, `ProbeError`, `IngestError`.
 - User-facing messages state **what failed**, **why**, and **what to do next**, naming both
   versions when relevant.
@@ -92,7 +93,7 @@ Rules:
   ruff check .
   ruff format --check .
   python -m build
-  mypy aasbridge        # optional
+  mypy src/aas_bridge   # optional
   ```
 
 - A step is done only when the declared checks pass; otherwise it stays open.

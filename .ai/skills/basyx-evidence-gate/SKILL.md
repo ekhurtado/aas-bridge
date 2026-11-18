@@ -13,7 +13,7 @@ consumers:
 
 ## Activation Criteria
 
-- **Applies when:** implementing or changing `aasbridge/probes/`, `aasbridge/engine/gate.py`,
+- **Applies when:** implementing or changing `../../../src/aas_bridge/probes/`, `../../../src/aas_bridge/engine/gate.py`,
   the basyx dialect matrix, the baseline comparison, the round-trip or the emit-only-on-pass
   behaviour.
 - **Does NOT apply when:** implementing package I/O (`aasx-core`), GUI (`nicegui-frontend`) or

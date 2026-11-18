@@ -44,7 +44,7 @@ consumers:
    otherwise `FAIL`.
 6. **Cite precisely.** Every defect has a `file:line`, a rule ID and a required fix.
 7. **Loop cap.** Maximum two rework loops; a third failure is an escalation, not another `FAIL`.
-8. **Laws and conventions.** Check AGPL-3.0, `pyproject.toml` as the dependency source, no
+8. **Laws and conventions.** Check GPL-3.0, `pyproject.toml` as the dependency source, no
    secrets, Spanish chat/English artifacts, fail-closed, evidence gate, input mutation, UI
    contract/i18n.
 9. **No invention.** Never fabricate a command result, hash, date or evidence source.

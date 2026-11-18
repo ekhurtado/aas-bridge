@@ -43,7 +43,7 @@ consumers:
    and an observable verification. Order bottom-up: registry/engine → probes → CLI → GUI →
    tests/docs, unless a dependency forces another order.
 6. **Verification is executable.** Use exact commands (`python -m pytest`, `ruff check .`,
-   `python -m build`, `mypy aasbridge` when applicable) and explicit manual steps for GUI/Docker.
+   `python -m build`, `mypy src/aas_bridge` when applicable) and explicit manual steps for GUI/Docker.
 7. **DoD is testable.** No “works well” items; every checkbox must map to evidence.
 8. **UI gates.** `ui_scope: none|ui|shell`; `ui: ui` requires `design_ref` and a contract update;
    `ui: shell` additionally requires a decision. Cover the four data states and EN/ES.
@@ -80,7 +80,7 @@ consumers:
 ## Error Prevention & Anti-Patterns
 
 - ⚠️ **Vague step:** “implement detection” with no files or verification.
-  ✔️ Name `aasbridge/engine/detect.py`, the detection cases and the exact test command.
+  ✔️ Name `../../../src/aas_bridge/engine/detect.py`, the detection cases and the exact test command.
 - ⚠️ **Chat-only requirement:** a detail agreed in conversation but absent from the SPEC.
   ✔️ Write it in §1/§3/§4 before approval.
 - ⚠️ **Unbounded file list:** “touch whatever is needed”.

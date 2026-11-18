@@ -90,22 +90,27 @@ Límite de D: `aas-core` solo cubre el metamodelo (JSON/XML), **no el empaquetad
 import io, zipfile, json
 from dataclasses import dataclass
 
+
 @dataclass
 class Loaded:
-    store: object            # basyx DictObjectStore / IdentifiableStore
-    files: object            # SupplementaryFileContainer
+    store: object  # basyx DictObjectStore / IdentifiableStore
+    files: object  # SupplementaryFileContainer
     source_version: str
+
 
 def detect_version(json_doc: dict) -> str:
     # validar contra schema 3.1 primero; si falla, contra 3.0.8
     ...
 
+
 def upgrade_30_to_31(doc: dict) -> dict:
     # reglas declarativas (pocas, la mayoría son no-ops)
     ...
 
+
 def load_aasx(data: bytes) -> Loaded:
     from basyx.aas.adapter import aasx
+
     with zipfile.ZipFile(io.BytesIO(data)) as z:
         # si la versión es 3.0: reescribir aasx/*.json|xml y relaciones en un
         # zip en memoria con upgrade_30_to_31, y pasarlo a AASXReader
@@ -116,6 +121,7 @@ def load_aasx(data: bytes) -> Loaded:
 # En el agente SPADE (asyncio): BaSyx es síncrono y bloqueante
 import asyncio
 from spade.behaviour import CyclicBehaviour
+
 
 class ReadAAS(CyclicBehaviour):
     async def run(self):

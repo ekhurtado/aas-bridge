@@ -41,7 +41,7 @@ consumers:
 6. **Tests:** `python -m pytest`; focused tests when the SPEC declares them; integration/network
    tests only when declared.
 7. **Lint/format:** `ruff check .`, `ruff format --check .`.
-8. **Typecheck:** `mypy aasbridge` when the SPEC declares it (optional).
+8. **Typecheck:** `mypy src/aas_bridge` when the SPEC declares it (optional).
 9. **Contract/grep checks:** exact patterns and expected output; include the command.
 10. **UI checks:** four states, EN/ES catalogs, no literal tokens, accessibility, native/Docker
     behavior; record manual evidence separately.

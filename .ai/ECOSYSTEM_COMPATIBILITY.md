@@ -70,8 +70,6 @@ conversion. Proven empirically (§4).
 
 ### Version status (2026-11-18)
 - AAS Part 1: **v3.2.0 published** (Jul 2026); **v3.3 in progress**.
-- `aas-core3.2-python` 1.0.0rc2 published 2026-10-29 (release candidate — per ChatGPT
-  transcript; treat as unverified until we probe it).
 - basyx 2.2.0 still implements v3.1.2 ⇒ a **second gap** (3.2 vs basyx) already exists.
   This validates the "structural, recurring problem" premise of the project.
 
@@ -147,6 +145,40 @@ the foundation of Phase 1 and of the SMIA runtime layer.
   environment namespace declarations — must never be touched by any transformation.
 - The colleagues' reported container "hang" was an unrelated ejabberd exit, not a basyx
   issue. Don't chase ghosts when adding evidence.
+
+### 4.6 basyx JSON adapter facts (verified 2026-11-18; sources: basyx-python-sdk source at
+### tags 2.0.1 and 2.2.0 on GitHub, fetched 2026-11-18)
+
+These facts ground SPEC-001's JSON **detect-only** scope (TD-001) and defer JSON migration to
+a dedicated evidence cycle:
+
+- **J1 — AASXReader supports JSON parts:** `AASXReader._parse_aas_part` dispatches by content
+  type/extension to `read_aas_json_file` (source: `sdk/basyx/aas/adapter/aasx.py` @2.2.0).
+  SMIA can therefore read JSON AASX parts.
+- **J2 — basyx never validates a JSON version marker:** the JSON deserializers of 2.0.1 and
+  2.2.0 parse by `modelType`/attributes only; neither reads nor checks `@context`; there is
+  no JSON equivalent of `NS_AAS` (source: `json_deserialization.py` @2.0.1 and @2.2.0).
+- **J3 — basyx never writes `@context`:** `object_store_to_json`/`write_aas_json_file` emit
+  only the categorized object dicts (source: `json_serialization.py` @2.2.0). JSON files
+  produced by basyx carry **no version marker at all** → their version is undetectable by any
+  basyx-based mechanism.
+- **J4 — the dialect manifests in JSON only through attribute strictness:** e.g. 2.0.1
+  requires `entityType`, `contentType`, `RelationshipElement/first|second` (mandatory in
+  V3.0), while 2.2.0 accepts their absence (optional in V3.1) (source: constructor comparison
+  @2.0.1 vs @2.2.0). A V3.1 JSON document loaded with 2.0.1 fails per-object (failsafe: logs
+  and **silently skips**) rather than failing as a whole.
+
+**Consequences:** (a) JSON detection must peek `@context` ourselves, and files without it are
+fail-closed "undetectable"; (b) an XML-style evidence gate is **not meaningful for JSON**
+(both dialects parse any `@context` identically), so a JSON re-label cannot be stamped as
+proven by the current gate; (c) JSON migration needs its own evidence cycle (corpus/fixtures,
+possibly JSON-Schema validation with its own decision) before any rule is approved.
+
+Also recorded (packaging evidence for ADR-022, fetched 2026-11-18): licences verified via
+PyPI JSON / GitHub API — basyx-python-sdk 2.2.0 MIT (transitives: lxml BSD-3,
+python-dateutil BSD-3, pyecma376-2 Apache-2.0), typer 0.29.2 MIT (transitives permissive:
+pydantic MIT, rich MIT, shellingham ISC, colorama BSD), pytest MIT (**CVE-2025-71176 /
+GHSA-6w46-j5rx-g56g fixed in 9.0.3 → require >=9.0.3**), ruff MIT, build 1.4.0 MIT, mypy MIT.
 
 ## 5. SMIA repository facts (verified 2026-11-18, SMIA repo @ v1.0.3.4)
 

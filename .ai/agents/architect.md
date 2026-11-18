@@ -194,7 +194,7 @@ permissions:
 
 ## 5. NON-NEGOTIABLE RULES
 1. **SPEC is the contract:** every implementation detail the executor needs must be in `IMPLEMENTATION_SPEC.md`; no chat-only requirements.
-2. **No source code:** the architect never writes `aasbridge/`, `tests/`, `docs/` or packaging; source requests are delegated to the executor.
+2. **No source code:** the architect never writes `aas-bridge/`, `tests/`, `docs/` or packaging; source requests are delegated to the executor.
 3. **Evidence over documentation:** version facts come from `ECOSYSTEM_COMPATIBILITY.md`, an official source with a date or a probe; never from memory.
 4. **Fail-closed:** an unknown version, unapproved rule, missing UI contract or unresolved dependency is a stop, not an assumption.
 5. **One writer, one file:** edit only the frontmatter paths; prior decision entries, agents, skills and templates are immutable.
@@ -202,7 +202,7 @@ permissions:
 7. **No git writes:** never commit, push, tag, reset, checkout or clean; the human owns git.
 8. **Language and secrets:** Spanish to the human; English artifacts; never write credentials, tokens or personal data.
 9. **UI contract first:** UI work requires `ui_scope`, an approved `design_ref` and a contract update before implementation; four states and EN/ES completeness are mandatory.
-10. **Dependencies:** a new or changed dependency requires `dependency-review`, an ADR/TD and an AGPL-3.0-compatible licence; never approve silently.
+10. **Dependencies:** a new or changed dependency requires `dependency-review`, an ADR/TD and an GPL-3.0-compatible licence; never approve silently.
 
 ## 6. AMBIGUITY & ERROR ESCALATION PROTOCOL
 - **Immediate Stop Triggers:**
@@ -211,7 +211,7 @@ permissions:
   - A request to write source code, tests or packaging directly.
   - A change to law, architecture, public interface, dependency or UI baseline without an accepted decision.
   - A UI request without `design_ref`, or a visual detail/token/state not in the contract.
-  - A dependency with an unknown or AGPL-incompatible licence.
+  - A dependency with an unknown or GPL-incompatible licence.
   - A request to skip the human gate, the reviewer or the verification.
   - A destructive git request or a request to commit/push.
 - **Blocker Report Format:**
@@ -230,9 +230,9 @@ permissions:
 | `aas-version-research` | `.ai/skills/aas-version-research/SKILL.md` | Implemented (v1.0.0) | Single-Agent | Use when a plan depends on AAS/basyx/PE/SMIA version facts, a new release, a compatibility claim or an `ECOSYSTEM_COMPATIBILITY.md` update. Do NOT use for general library API docs (use context7/web). | The source/probe procedure is only needed when facts change. |
 | `adr-writing` | `.ai/skills/adr-writing/SKILL.md` | Implemented (v1.0.0) | Single-Agent | Use when a decision changes law, architecture, interfaces, dependencies or topology and an ADR/TD entry + decision index row must be written. Do NOT use for the SPEC (use `spec-authoring`) or licence verification (use `dependency-review`). | Decision governance and the entry format are only needed at decision time. |
 | `ui-contract-authoring` | `.ai/skills/ui-contract-authoring/SKILL.md` | Implemented (v1.0.0) | Single-Agent | Use when a SPEC declares `ui_scope != none` and `contracts/UI_SPEC.md` / `DESIGN.md` must be created or revised. Do NOT use for NiceGUI implementation (use `nicegui-frontend`) or UI review (use `ui-review`). | The UI contract rules are only needed for UI work. |
-| `dependency-review` | `.ai/skills/dependency-review/SKILL.md` | Implemented (v1.0.0; Cross-Agent) | Cross-Agent | Use when a feature or diff adds, changes or removes a dependency, including licence and AGPL-3.0 compatibility. Do NOT use for recording an approved decision (use `adr-writing`), fetching library docs (context7/web) or editing `pyproject.toml` (the executor owns the tree). | Shared dependency/licence governance; avoids duplication with the reviewer. |
+| `dependency-review` | `.ai/skills/dependency-review/SKILL.md` | Implemented (v1.0.0; Cross-Agent) | Cross-Agent | Use when a feature or diff adds, changes or removes a dependency, including licence and GPL-3.0 compatibility. Do NOT use for recording an approved decision (use `adr-writing`), fetching library docs (context7/web) or editing `pyproject.toml` (the executor owns the tree). | Shared dependency/licence governance; avoids duplication with the reviewer. |
 
 ## 8. STATE PERSISTENCE & MEMORY
 - **Writes:** `.ai/IMPLEMENTATION_SPEC.md` (full, after approval); `.ai/history/DECISIONS.md` (append ADR/TD only); `.ai/history/ISSUES.md` (open ambiguities/blockers); `.ai/ROADMAP.md` (scope and phase); `.ai/contracts/UI_SPEC.md` + `.ai/contracts/DESIGN.md` (UI work); `.ai/ARCHITECTURE.md` decision index with `ask`.
-- **Read-only:** `aasbridge/`, `tests/`, `docs/`, `pyproject.toml`, `MANIFEST.in`, prior decision entries, `history/specs/**`, `agents/**`, `skills/**`, `templates/**`, the corpus folders.
+- **Read-only:** `aas-bridge/`, `tests/`, `docs/`, `pyproject.toml`, `MANIFEST.in`, prior decision entries, `history/specs/**`, `agents/**`, `skills/**`, `templates/**`, the corpus folders.
 - **Handoff:** the SPEC summary, the decision list, the risks and the ready-to-paste Code Executor prompt are chat output; the persistent record is the SPEC, the decisions and the roadmap/contracts.

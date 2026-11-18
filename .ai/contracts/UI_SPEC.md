@@ -18,7 +18,8 @@
 
 ## 2. Shell / Layout Contract
 
-- **Shell owner:** the GUI package (`aasbridge/gui/`). Feature views never edit the global
+- **Shell owner:** the GUI package (`src/aas_bridge/gui/`, SPEC-002). Feature views never edit
+  the global
   shell or render their own chrome.
 - **Layout regions:**
   - **Header:** product name, online/offline status badge, EN/ES language selector.

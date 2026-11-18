@@ -279,27 +279,13 @@ La interfaz de lectura podría ser:
 ```python
 from typing import Protocol, Any
 
+
 class AASReader(Protocol):
+    def read_aas(self, source: str) -> Any: ...
 
-    def read_aas(
-        self,
-        source: str
-    ) -> Any:
-        ...
+    def read_submodel(self, aas_id: str, submodel_id: str) -> Any: ...
 
-    def read_submodel(
-        self,
-        aas_id: str,
-        submodel_id: str
-    ) -> Any:
-        ...
-
-    def get_property_value(
-        self,
-        submodel_id: str,
-        id_short: str
-    ) -> Any:
-        ...
+    def get_property_value(self, submodel_id: str, id_short: str) -> Any: ...
 ```
 
 Naturalmente, en una implementación real utilizaría modelos tipados en lugar de `Any`.
@@ -308,17 +294,12 @@ El agente SPADE tendría una dependencia de la interfaz, no de BaSyx:
 
 ```python
 class MyAASAgent(Agent):
-
     async def setup(self):
 
-        self.aas_reader = create_aas_reader(
-            source="models/equipment.aasx"
-        )
+        self.aas_reader = create_aas_reader(source="models/equipment.aasx")
 
         submodel = await asyncio.to_thread(
-            self.aas_reader.read_submodel,
-            "urn:example:aas:001",
-            "urn:example:submodel:001"
+            self.aas_reader.read_submodel, "urn:example:aas:001", "urn:example:submodel:001"
         )
 
         # Trabajar con el modelo normalizado
@@ -582,7 +563,6 @@ Recomiendo encapsular completamente esta funcionalidad en un módulo:
 
 ```python
 class AASXPackageManager:
-
     def inspect(self, aasx_path):
         """
         Inspecciona el paquete OPC.

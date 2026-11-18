@@ -1,0 +1,60 @@
+{
+  "schema_version": 1,
+  "tool_version": "0.1.0",
+  "generated_at": "2026-11-18T12:00:00+00:00",
+  "source": {
+    "file": "aas_v3-0/CeDRI_PunchingMachine_instanceA.aasx",
+    "sha256": "6045f61cc67eb2a26f3e536301eaa5409845c9162606f624d24915105a6e5f4b"
+  },
+  "detected": {
+    "version_label": "3.0",
+    "consistent": true,
+    "parts": [
+      {
+        "part_name": "/aasx/IndustrialRobot_ABB_CeDRI/IndustrialRobot_ABB_CeDRI.aas.xml",
+        "format": "xml",
+        "declared_version": "https://admin-shell.io/aas/3/0",
+        "version_label": "3.0"
+      }
+    ]
+  },
+  "target": {
+    "version_label": "3.1",
+    "namespace": "https://admin-shell.io/aas/3/1",
+    "basyx_version": "2.2.0"
+  },
+  "rules_applied": [
+    "v3_0_to_v3_1/namespace-relabel"
+  ],
+  "baseline": {
+    "basyx_version": "2.0.1",
+    "total": 22,
+    "counts": {
+      "aas": 1,
+      "submodels": 6,
+      "concept_descriptions": 15
+    },
+    "ids_sha256": "e8d964b3df1b1294186f173aafda82e89d416305115f363f84244af8d4a3919b",
+    "semantic_ids_sha256": "3ab2ff66eb62bce540fcf2d872db8ba452859f6e0f2d3ce834c8954ededb4ffa"
+  },
+  "gate": {
+    "result": "pass",
+    "target": {
+      "basyx_version": "2.2.0",
+      "total": 22,
+      "counts": {
+        "aas": 1,
+        "submodels": 6,
+        "concept_descriptions": 15
+      },
+      "ids_sha256": "e8d964b3df1b1294186f173aafda82e89d416305115f363f84244af8d4a3919b",
+      "semantic_ids_sha256": "3ab2ff66eb62bce540fcf2d872db8ba452859f6e0f2d3ce834c8954ededb4ffa"
+    },
+    "round_trip": true,
+    "message": null
+  },
+  "outcome": {
+    "status": "emitted",
+    "output_file": "CeDRI_PunchingMachine_instanceA-adapted.aasx"
+  }
+}

@@ -62,7 +62,7 @@ consumers:
 - **Superseding:** keep the old entry, set its status and append the new one.
 - **Conflicting decisions:** cite both, explain the resolution and supersede explicitly.
 - **Missing evidence:** stop; do not record a decision on a guess.
-- **Dependency change:** require `dependency-review` + the AGPL-3.0 verdict.
+- **Dependency change:** require `dependency-review` + the GPL-3.0 verdict.
 - **UI baseline change:** bump the contract version and reference the decision.
 
 ## Error Prevention & Anti-Patterns

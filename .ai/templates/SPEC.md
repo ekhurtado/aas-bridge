@@ -59,7 +59,7 @@ State what must not change. Link to `ARCHITECTURE.md` sections and decisions by 
 - Focused tests: `<command>`
 - Lint: `ruff check .`
 - Format: `ruff format --check .`
-- Typecheck: `mypy aasbridge` (optional)
+- Typecheck: `mypy aas-bridge` (optional)
 - Contract/grep checks: <exact commands and expected output>
 - UI checks (if `ui_scope != none`): four data states, EN/ES catalogs complete, semantic tokens
   only, accessibility, no logic in views.

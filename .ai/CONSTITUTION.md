@@ -62,7 +62,7 @@
 
 ## L2. Engineering Laws
 
-15. **LICENSING:** The project is **AGPL-3.0**. Dependencies must be licence-compatible; vendored
+15. **LICENSING:** The project is **GPL-3.0**. Dependencies must be licence-compatible; vendored
     IDTA artifacts keep **CC-BY-4.0** attribution; a dependency change requires
     `dependency-review` and an approved decision.
 
