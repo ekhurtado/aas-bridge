@@ -286,11 +286,11 @@
 | Q3 | Ingestion scope: only `.aasx`, or also standalone `.xml`/`.json` + AAS-Repository path? | SMIA reads all three; the runtime layer covers `.aasx`/`.xml` and declares JSON out of scope (no embedded version). |
 | Q4 | In the colleagues' stack, are there v3.0-only consumers of AASX files written back by their tooling (`OrderHistory` writes)? | Fixes the ecosystem write version; decides urgency of downgrade (Phase 2). |
 | Q5 | SMIA Docker images install `smia` from PyPI — is release latency acceptable for shipping the basyx upgrade, or should local builds use `pip install .`? | Affects how Track S reaches Docker users. |
-| Q6 | Project name confirmation: "AAS Bridge" (repo already `AAS_bridge`; all three prior AI sessions converged on a bridge-flavoured name). | Cosmetic but locks the CLI command (`aas_bridge`) and package name; check PyPI/GitHub availability before the first release. |
+| Q6 | Project name confirmation: "AAS Bridge" (repo already `AAS_bridge`; all three prior AI sessions converged on a bridge-flavoured name). | Cosmetic but locks the CLI command (`aas-bridge`) and package name; check PyPI/GitHub availability before the first release. |
 
 ## Sources of the session (inputs)
 
-- Three prior AI analysis transcripts (`ai_sessions_transcripts/`): Claude (version matrix,
+- Three prior AI analysis transcripts (`../ai_sessions_transcripts/`): Claude (version matrix,
   aas-core option, normalization intuition), Gemini (infeasibility of dual-SDK in one process,
   web-local GUI analysis), ChatGPT (v3.2/v3.3 horizon, per-pair rules, pyecma376-2, plan
   taxonomy). Their factual errors (e.g. Gemini's "structural changes 3.0→3.1") are superseded by
@@ -386,8 +386,8 @@
 
 ## Rename consolidation 2026-11-18 — SPEC-001 rev 2 (ADR-023, ADR-024, TD-002)
 
-> Human-approved on 2026-11-18 (rename Option A: distribution `aas_bridge`, package
-> `aas_bridge`, CLI `aas_bridge`, `src/` layout; licence stays GPL-3.0 — "keep GPL, like the
+> Human-approved on 2026-11-18 (rename Option A: distribution `aas-bridge`, package
+> `aas_bridge`, CLI `aas-bridge`, `src/` layout; licence stays GPL-3.0 — "keep GPL, like the
 > LICENSE file"). Closes ISS-005 (D3 licence trail) and records the reviewer loop-1 decisions
 > (ISS-007 M2).
 
@@ -413,29 +413,30 @@
 - **Revisable when:** a distribution channel or partner requires different terms, or the
   human changes the licence policy (then supersede with a new dated ADR, never in place).
 
-### [ADR-024] Naming, layout and packaging: `aas_bridge` / `aas_bridge` / src layout
+### [ADR-024] Naming, layout and packaging: `aas-bridge` / `aas_bridge` / src layout
 - **Date:** 2026-11-18 | **Phase:** 1 | **Status:** Accepted
 - **Scope:** Interface + Process (packaging); supersedes [ADR-022] and carries its dependency
   baseline forward unchanged.
-- **Alternatives:** (A) keep `aas_bridge` (hyphenless distribution + flat layout);
-  (B) distribution `aas_bridge`, import package `aas_bridge`, CLI `aas_bridge`, `src/`
+- **Alternatives:** (A) keep `aasbridge` (hyphenless distribution + flat layout);
+  (B) distribution `aas-bridge`, import package `aas_bridge`, CLI `aas-bridge`, `src/`
   layout (chosen); (C) underscore everywhere (`aas_bridge` as distribution name too).
 - **Decision:** Option A of the human's rename proposal, approved 2026-11-18:
-  - Distribution/PyPI name: **`aas_bridge`**.
+  - Distribution/PyPI name: **`aas-bridge`**.
   - Importable package: **`aas_bridge`** (a hyphen is not valid in a Python package/import
-    name; the human's `../../src/aas_bridge/` folder is consolidated to `src/aas_bridge/`).
-  - CLI command: **`aas_bridge`** (replaces `aas_bridge`; public interface change → TD-002).
+    name; the human's `src/aas-bridge/` folder is consolidated to `src/aas_bridge/`).
+  - CLI command: **`aas-bridge`** (replaces `aasbridge`; public interface change → TD-002).
   - Layout: **`src/aas_bridge/`** (canonical src layout; setuptools `package-dir = {"" =
     "src"}`, `packages.find where = ["src"], include = ["aas_bridge*"]`; ruff `src =
     ["src", "tests"]` with a per-file-ignore for `src/aas_bridge/cli/main.py`).
   - Version banner: `"aas-bridge {version}"`.
-  - **Unchanged identifiers:** `aas-bridge_CACHE_DIR` and the default cache dir path
-    (`%LOCALAPPDATA%/aas-bridge/cache` / `~/.cache/aas-bridge`) — renaming them would
-    silently invalidate cached baselines; they are internal, not public interface.
-- **Justification:** a hyphen cannot appear in a Python module/import path, so `aas_bridge`
+  - **Unchanged identifiers:** `AASBRIDGE_CACHE_DIR` and the default cache dir path
+    (`%LOCALAPPDATA%/aasbridge/cache` / `~/.cache/aasbridge`) — the cache name and paths do
+    NOT change with the rename (renaming them would silently invalidate cached baselines);
+    they are internal, not public interface.
+- **Justification:** a hyphen cannot appear in a Python module/import path, so `aas-bridge`
   as an importable package is invalid (the executor verified `ModuleNotFoundError`); the src
   layout is canonical packaging practice and prevents accidental imports of the working
-  directory; PEP 503 normalizes `aas_bridge` and `aas_bridge` to the same PyPI key, so the
+  directory; PEP 503 normalizes `aas-bridge` and `aas_bridge` to the same PyPI key, so the
   hyphenated distribution name is the readable canonical form. The ADR-022 dependency
   baseline (runtime `basyx-python-sdk ~= 2.2` / `typer ~= 0.29` / `pyecma376-2 >= 1.0.2`;
   dev `pytest >= 9.0.3` incl. the CVE-2025-71176 pin, `ruff >= 0.16`, `build >= 1.4.0`,
@@ -444,20 +445,20 @@
   amended in place during the licence trail (AGPL → GPL wording); its operative content is
   restated here so the superseded entry needs no further edits.
 - **Accepted trade-offs:** public interface change (CLI rename) → every user/venv must
-  reinstall and any script calling `aas_bridge` must be updated (TD-002); docs, contracts,
+  reinstall and any script calling `aasbridge` must be updated (TD-002); docs, contracts,
   skills and agent definitions were re-aligned in this consolidation; one extra `pip
   install -e` + rebuild cycle in SPEC-001 rev 2.
 - **Revisable when:** a PyPI name conflict appears at first publish, or tooling imposes a
   different naming/layout constraint.
 
-### [TD-002] CLI contract v2: command `aas_bridge`; refusal-report persistence
+### [TD-002] CLI contract v2: command `aas-bridge`; refusal-report persistence
 - **Date:** 2026-11-18 | **Phase:** 1 | **Status:** Accepted
 - **Scope:** Interface (CLI + detection semantics); supersedes [TD-001] (the command name
   part; all other semantics carried forward).
-- **Alternatives:** (A) keep the `aas_bridge` command and change only import/layout;
-  (B) rename the command to `aas_bridge` (chosen, human-approved); refused-report handling:
+- **Alternatives:** (A) keep the `aasbridge` command and change only import/layout;
+  (B) rename the command to `aas-bridge` (chosen, human-approved); refused-report handling:
   (i) discard refusal evidence, (ii) persist it with `--report` (chosen).
-- **Decision:** the CLI is invoked as **`aas_bridge`** (`aas-bridge --version` prints
+- **Decision:** the CLI is invoked as **`aas-bridge`** (`aas-bridge --version` prints
   `"aas-bridge 0.1.0"`). Everything else from TD-001 is unchanged and remains in force:
   `check <file>` / `migrate <file>`, `--lang {en,es}` (system-locale default, `en` fallback),
   `--report <path>`, exit codes per `CONVENTIONS.md` §2 (0/1/2/3/4), JSON AAS parts

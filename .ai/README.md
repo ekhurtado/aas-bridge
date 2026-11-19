@@ -115,7 +115,7 @@ The human is the final gate. No agent commits, pushes, tags or publishes.
 | `history/DECISIONS.md`                                                                                | architect (append only) | ADR/TD ledger |
 | `history/ISSUES.md`                                                                                   | executor (append/update); reviewer reports in chat | Open + resolved |
 | `history/SESSION_LOG.md`, `history/specs/`                                                            | executor at close, after human approval | Append-only |
-| `aas-bridge/`, `tests/`, ...  →  `src/aas_bridge/`, `tests/`, `docs/`, `pyproject.toml`, `MANIFEST.in` | executor | Only files declared in the SPEC (src layout per ADR-024) |
+| `src/aas_bridge/`, `tests/`, `docs/`, `pyproject.toml`, `MANIFEST.in`                           | executor | Only files declared in the SPEC (src layout per ADR-024) |
 | `agents/`, `skills/`, `templates/`                                                                    | human (bootstrap) | Static; agents may read |
 
 ## 6. IDs, links and rotation
@@ -136,12 +136,14 @@ The human is the final gate. No agent commits, pushes, tags or publishes.
 ## 8. Current state
 
 - AI architecture bootstrap: complete (2026-11-18).
-- SPEC-001 rev 2 active (2026-11-18): Phase 1 headless core implemented and re-opened for
-  the human-approved rename consolidation — distribution `aas_bridge`, import package
-  `aas_bridge`, CLI `aas_bridge`, canonical `src/aas_bridge/` layout (ADR-024); licence
-  GPL-3.0 (ADR-023). The rev 1 reviewer PASS is invalidated; full §5 re-verification and a
-  reviewer re-audit are required before the close.
+- SPEC-001 rev 2 implemented and verified (2026-11-19): Phase 1 headless core delivered under
+  the human-approved rename consolidation — distribution `aas-bridge`, import package
+  `aas_bridge`, CLI `aas-bridge`, canonical `src/aas_bridge/` layout (ADR-024); licence
+  GPL-3.0 (ADR-023). Reviewer PASS against rev 2 (loop 1/2) and manual verification completed
+  (3× v3.0 emitted/gate pass, 3× v3.1 "already AAS 3.1", corpus hashes identical, venv at
+  basyx 2.2.0).
 - Decisions: ADR-020 superseded by ADR-023; ADR-022 superseded by ADR-024; TD-001
   superseded by TD-002.
-- Next: executor completes the rename (reinstall, build, §5, ISS-007), reviewer re-audits,
-  human manual verification; then the close and SPEC-002 (GUI + Docker).
+- Next: close SPEC-001 rev 2 (ISS-010 wording alignment applied; executor closes the issue,
+  archives the SPEC/OUTCOME, appends the session log and ticks the roadmap, after human
+  approval), then SPEC-002 (GUI + Docker).

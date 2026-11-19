@@ -20,36 +20,36 @@
 **Split into two cycles (2026-11-18): SPEC-001 = headless core + CLI (A1a, A2-A6); SPEC-002 =
 minimal bilingual GUI + Docker (A1b).**
 
-- [ ] A1a. Package skeleton (SPEC-001): `aas_bridge` Python package under `src/` (distribution
-      `aas_bridge`, CLI `aas_bridge` — ADR-024), core engine + registry layout, Typer CLI,
+- [x] A1a. Package skeleton (SPEC-001): `aas_bridge` Python package under `src/` (distribution
+      `aas-bridge`, CLI `aas-bridge` — ADR-024), core engine + registry layout, Typer CLI,
       pytest harness, packaging (pyproject, MANIFEST, LICENSE, README).
 - [ ] A1b. Local web GUI (NiceGUI) implementing `contracts/UI_SPEC.md` +
       `contracts/DESIGN.md`, bilingual EN/ES, with: upload → version diagnosis → one-click
       migrate → download `<name>-adapted.aasx` (SPEC-002; Docker smoke optional while
       ISS-004 is open).
 
-- [ ] A2. Version detection: inspect AASX XML parts for xmlns declarations (both forms:
+- [x] A2. Version detection: inspect AASX XML parts for xmlns declarations (both forms:
       default `xmlns="...aas/3/0"` from PE v3.0 files and prefixed `xmlns:aas=".../3/1"`
       from v3.1 files). Report declared version; distinguish it from versioned external
       IRIs (IEC 61360 `DataSpecificationTemplates/.../3/0`) which are NOT declarations.
       JSON AAS parts are **detect-only** via `@context` ("undetectable" when absent —
       basyx-written JSON carries no marker); migration refuses JSON parts fail-closed
       (TD-001, evidence §4.6). JSON *migration* is deferred to a dedicated evidence cycle.
-- [ ] A3. Upgrade transformation V3.0 → V3.1: re-label namespace **declarations only**;
+- [x] A3. Upgrade transformation V3.0 → V3.1: re-label namespace **declarations only**;
       rebuild the OPC/ZIP package preserving every other part byte-for-byte (supplementary
       files, OWL ontologies, `.properties`, thumbnails, BOMs, relationships, `[Content_Types].xml`).
       Operate on a copy; never mutate the original file.
-- [ ] A4. **Evidence gate (the core asset)**: before/after validation —
+- [x] A4. **Evidence gate (the core asset)**: before/after validation —
       1) load original with source-dialect basyx (2.0.1) → baseline (object counts, IDs,
       semanticIds); 2) load adapted with target-dialect basyx (2.2.0); 3) compare;
       4) round-trip re-read. A file that does not match its baseline is not emitted.
       Mechanism: same-venv pip swap in subprocesses, main process never imports basyx,
       baseline cache + swap lock (ADR-021). A v3.1 input short-circuits to the first-class
       "already AAS 3.1 — no migration needed" result (TD-001).
-- [ ] A5. Regression corpus: the 6 AASX files of this repo as fixtures with expected
+- [x] A5. Regression corpus: the 6 AASX files of this repo as fixtures with expected
       baselines (v3.0: 22/20/19 objects — AAS 1/1/1, SM 6/4/3, CD 15/15/15;
       v3.1: 34/32/22 — 2/2/1 AAS, 8/6/4 SM, 24/24/17 CD). Expected counts live in tests.
-- [ ] A6. Migration report (JSON with `schema_version` + human-readable console output
+- [x] A6. Migration report (JSON with `schema_version` + human-readable console output
       derived from it, `--lang {en,es}`; golden JSON fixtures).
 
 **Acceptance (SPEC-001, headless):** the 3 v3.0 corpus files migrate and pass the gate via

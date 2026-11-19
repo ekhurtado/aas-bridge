@@ -58,3 +58,30 @@
 - **Open issues:** ISS-001 (no initial commit), ISS-002 (no package/`pyproject.toml`), ISS-003
   (`ruff`/`mypy` not installed), ISS-004 (Docker absent).
 - **Next:** human initial commit; architect creates `SPEC-001` for Phase 1 MVP.
+
+## [SES-003] SPEC-001 rev 2 — aas-bridge rename, refusal evidence and close — 2026-11-19
+
+- **Mode:** implementation
+- **Participants:** human + code-executor + reviewer; architect (ISS-010 wording)
+- **Summary:** consolidated the human-approved rename to distribution/CLI `aas-bridge`,
+  import package `aas_bridge` under `src/aas_bridge/`; implemented TD-002 refusal-report
+  persistence (report written with `--report`, adapted file removed, `EvidenceGateError`
+  + exit 3); re-ran the full §5 set and passed the rev 2 re-audit (loop 1/2). The human
+  completed the manual verification on 2026-11-19: 3 v3.0 files emitted with gate pass
+  and round-trip, 3 v3.1 files "already AAS 3.1", all 6 originals hash-identical, venv
+  restored to basyx 2.2.0. ISS-010 wording aligned and verified; ISS-007 closed.
+- **Decisions:** ADR-021, ADR-023, ADR-024, TD-002
+- **Artifacts:** `src/aas_bridge/**`, `tests/**`, `pyproject.toml`, `MANIFEST.in`,
+  `README.md`, `LICENSE`, `.ai/IMPLEMENTATION_SPEC.md`, `.ai/history/ISSUES.md`,
+  `.ai/history/SESSION_LOG.md`, `.ai/history/specs/SPEC-001_phase1-core-upgrade-gate-cli/`,
+  `.ai/ROADMAP.md`
+- **Checks:** build PASS (`aas_bridge-0.1.0` sdist+wheel, GPL metadata); offline 86 passed/
+  7 deselected; full 93 passed (real 2.0.1 <-> ~=2.2 swaps); ruff/format clean; `mypy
+  src/aas_bridge` 19 files; `pip show aas-bridge` Name/Version; `aas-bridge --version`
+  -> `aas-bridge 0.1.0`; old `aasbridge` command/module absent; venv 2.2.0; corpus
+  untouched; `NS_AAS` only in `_loaders/`; no basyx import in the main process; no
+  `aasbridge.*` imports or `aas-bridge/` paths. Manual: check EN/ES, 3 migrations
+  (22/20/19 objects, gate pass, round-trip), cache hit on the second CeDRI run, 3 v3.1
+  no-migration, 6 hashes True.
+- **Next:** SPEC-002 (GUI + Docker); follow-ups ISS-004 (Docker N/A), ISS-011/ISS-012/
+  ISS-013 (CLI minors).

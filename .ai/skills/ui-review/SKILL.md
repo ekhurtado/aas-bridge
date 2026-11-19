@@ -13,7 +13,7 @@ consumers:
 
 ## Activation Criteria
 
-- **Applies when:** the diff touches `../../../src/aas_bridge/gui/`, the i18n catalogs, the GUI token module or
+- **Applies when:** the diff touches `src/aas_bridge/gui/`, the i18n catalogs, the GUI token module or
   any UI-related file, and the SPEC declares `ui_scope != none`.
 - **Does NOT apply when:** implementing the UI (`nicegui-frontend`) or auditing the non-UI parts
   of the SPEC (`spec-compliance-audit`).

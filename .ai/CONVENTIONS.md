@@ -17,7 +17,7 @@
 | Skills | Skill IDs | `kebab-case` | `basyx-evidence-gate` |
 | CLI | Commands / flags | `kebab-case` | `aas-bridge doctor --file` |
 | JSON | Report keys | `snake_case`, stable | `detected_version` |
-| Environment | Variables | `aas-bridge_*` | `aas-bridge_CACHE_DIR` |
+| Environment | Variables | `AASBRIDGE_*` | `AASBRIDGE_CACHE_DIR` |
 | AAS | Model identifiers | preserve the standard spelling | `AssetKind`, `idShort` |
 
 Layout (canonical, per ADR-024; SPEC-001 rev 2):
@@ -63,7 +63,7 @@ Rules:
 
 ## 3. Error Handling & Edge Cases
 
-- Custom exception hierarchy rooted at `aas-bridgeError`:
+- Custom exception hierarchy rooted at `AASBridgeError`:
   `DetectionError`, `MigrationError`, `EvidenceGateError`, `ProbeError`, `IngestError`.
 - User-facing messages state **what failed**, **why**, and **what to do next**, naming both
   versions when relevant.

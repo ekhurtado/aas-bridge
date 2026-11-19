@@ -80,7 +80,7 @@ consumers:
 ## Error Prevention & Anti-Patterns
 
 - ⚠️ **Vague step:** “implement detection” with no files or verification.
-  ✔️ Name `../../../src/aas_bridge/engine/detect.py`, the detection cases and the exact test command.
+  ✔️ Name `src/aas_bridge/engine/detect.py`, the detection cases and the exact test command.
 - ⚠️ **Chat-only requirement:** a detail agreed in conversation but absent from the SPEC.
   ✔️ Write it in §1/§3/§4 before approval.
 - ⚠️ **Unbounded file list:** “touch whatever is needed”.

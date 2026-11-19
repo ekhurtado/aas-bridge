@@ -96,7 +96,7 @@ native and Docker, zero configuration.
 | Validators | `aas-core3.0` / `aas-core3.1` (3.2 when stable) |
 | GUI / CLI | NiceGUI (bilingual EN/ES) / Typer |
 | Package I/O | `zipfile` + explicit relationships; `pyecma376-2` if needed |
-| Distribution | `pip install aas-bridge` (distribution `aas_bridge`, package `aas_bridge`, src layout — ADR-024); Docker optional |
+| Distribution | `pip install aas-bridge` (distribution `aas-bridge`, package `aas_bridge`, src layout — ADR-024); Docker optional |
 | Licence | **GPL-3.0**; vendored IDTA artifacts CC-BY-4.0 with attribution |
 
 ## 8. Absolute constraints (never violate)

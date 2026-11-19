@@ -13,7 +13,7 @@ consumers:
 
 ## Activation Criteria
 
-- **Applies when:** implementing or changing `../../../src/aas_bridge/gui/`: the shell, the stepper, upload,
+- **Applies when:** implementing or changing `src/aas_bridge/gui/`: the shell, the stepper, upload,
   diagnosis, plan decisions, result/download, the language selector or the details panel.
 - **Does NOT apply when:** writing or revising the UI contract (`ui-contract-authoring`),
   reviewing a UI diff (`ui-review`) or implementing core logic (`aasx-core`,
@@ -26,7 +26,7 @@ consumers:
 - Read the core API the view will call (detection, diagnosis, plan, migration, export). For
   NiceGUI API details, fetch the current documentation with context7.
 - NiceGUI/Quasar built-ins only; no extra UI libraries.
-- The GUI must run natively (`aas_bridge` opens the browser) and in Docker (port 8080, HTTP
+- The GUI must run natively (`aas-bridge` opens the browser) and in Docker (port 8080, HTTP
   upload/download, no exit button).
 
 ## Technical Guidelines & Best Practices

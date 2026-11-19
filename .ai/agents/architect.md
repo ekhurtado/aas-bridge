@@ -194,7 +194,7 @@ permissions:
 
 ## 5. NON-NEGOTIABLE RULES
 1. **SPEC is the contract:** every implementation detail the executor needs must be in `IMPLEMENTATION_SPEC.md`; no chat-only requirements.
-2. **No source code:** the architect never writes `aas-bridge/`, `tests/`, `docs/` or packaging; source requests are delegated to the executor.
+2. **No source code:** the architect never writes `src/aas_bridge/`, `tests/`, `docs/` or packaging; source requests are delegated to the executor.
 3. **Evidence over documentation:** version facts come from `ECOSYSTEM_COMPATIBILITY.md`, an official source with a date or a probe; never from memory.
 4. **Fail-closed:** an unknown version, unapproved rule, missing UI contract or unresolved dependency is a stop, not an assumption.
 5. **One writer, one file:** edit only the frontmatter paths; prior decision entries, agents, skills and templates are immutable.
@@ -234,5 +234,5 @@ permissions:
 
 ## 8. STATE PERSISTENCE & MEMORY
 - **Writes:** `.ai/IMPLEMENTATION_SPEC.md` (full, after approval); `.ai/history/DECISIONS.md` (append ADR/TD only); `.ai/history/ISSUES.md` (open ambiguities/blockers); `.ai/ROADMAP.md` (scope and phase); `.ai/contracts/UI_SPEC.md` + `.ai/contracts/DESIGN.md` (UI work); `.ai/ARCHITECTURE.md` decision index with `ask`.
-- **Read-only:** `aas-bridge/`, `tests/`, `docs/`, `pyproject.toml`, `MANIFEST.in`, prior decision entries, `history/specs/**`, `agents/**`, `skills/**`, `templates/**`, the corpus folders.
+- **Read-only:** `src/aas_bridge/`, `tests/`, `docs/`, `pyproject.toml`, `MANIFEST.in`, prior decision entries, `history/specs/**`, `agents/**`, `skills/**`, `templates/**`, the corpus folders.
 - **Handoff:** the SPEC summary, the decision list, the risks and the ready-to-paste Code Executor prompt are chat output; the persistent record is the SPEC, the decisions and the roadmap/contracts.

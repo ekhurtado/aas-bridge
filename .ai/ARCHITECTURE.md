@@ -97,7 +97,7 @@ is the single source of truth for compatibility; SMIA consumes a generated artif
 
 ## 6. Deployment
 
-- **Local**: `aas_bridge` → NiceGUI/Uvicorn on 127.0.0.1 (dynamic port) →
+- **Local**: `aas-bridge` → NiceGUI/Uvicorn on 127.0.0.1 (dynamic port) →
   `webbrowser.open()`. Feels like a native app; exit button terminates the process.
 - **Docker**: `docker run -p 8080:8080 ekhurtado/aas-bridge` — same code; exit button
   disabled; files via HTTP upload/download (no volume mounts, no UID/GID issues).
@@ -150,7 +150,7 @@ One line per decision; full rationale, alternatives and trade-offs live in
 | ADR-021 | Evidence gate dialect mechanism: same-venv pip swap in subprocesses | Accepted |
 | ADR-022 | Dependency baseline for SPEC-001 | Accepted — Superseded by ADR-024 |
 | ADR-023 | Project licence is GPL-3.0 | Accepted |
-| ADR-024 | Naming, layout and packaging: `aas_bridge` / `aas_bridge` / `src` layout | Accepted |
+| ADR-024 | Naming, layout and packaging: `aas-bridge` / `aas_bridge` / `src` layout | Accepted |
 | TD-001 | CLI contract, JSON detect-only scope, and the no-migration result | Accepted — Superseded by TD-002 |
-| TD-002 | CLI contract v2: command `aas_bridge`; refusal-report persistence | Accepted |
+| TD-002 | CLI contract v2: command `aas-bridge`; refusal-report persistence | Accepted |
 
