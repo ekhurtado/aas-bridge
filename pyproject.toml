@@ -4,11 +4,12 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "aas-bridge"
-version = "0.1.0"
+version = "0.2.0"
 description = "Detect, diagnose and migrate AASX packages across AAS metamodel versions."
 readme = "README.md"
 requires-python = ">=3.11"
-license = { file = "LICENSE" }
+license = "GPL-3.0-only"
+license-files = ["LICENSE"]
 keywords = ["AAS", "AASX", "Asset Administration Shell", "basyx", "migration"]
 classifiers = [
     "Development Status :: 3 - Alpha",
@@ -16,7 +17,6 @@ classifiers = [
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
-    "License :: OSI Approved :: GNU General Public License v3",
     "Operating System :: OS Independent",
     "Topic :: Scientific/Engineering :: Interface Engine/Protocol Translator",
 ]
@@ -55,6 +55,8 @@ select = ["E", "F", "I", "UP", "B", "SIM"]
 [tool.ruff.lint.per-file-ignores]
 # Typer requires option/argument definitions in function defaults (B008).
 "src/aas_bridge/cli/main.py" = ["B008"]
+"src/aas_bridge/cli/smia_cmd.py" = ["B008"]
+"src/aas_bridge/cli/update_cmd.py" = ["B008"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

@@ -94,7 +94,7 @@ def test_version_flag() -> None:
     result = _invoke(["--version"])
 
     assert result.exit_code == 0
-    assert "aas-bridge 0.1.0" in _text(result)
+    assert "aas-bridge 0.2.0" in _text(result)
 
 
 def test_check_reports_upgrade_in_english(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
@@ -310,3 +310,167 @@ def test_check_output_survives_a_cp1252_stream(
     text = stdout_buffer.getvalue().decode("utf-8")
     assert "Upgrade available: yes" in text
     assert "AAS 3.0" in text
+
+
+# --------------------------------------------------------- SPEC-003 new commands
+
+
+def test_smia_command_unverified_is_exit_0(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    from aas_bridge.cli import actions
+    from aas_bridge.registry.ecosystem.smia import SmiaResolution
+
+    monkeypatch.setattr(
+        actions,
+        "resolve_smia",
+        lambda version, probe: SmiaResolution(
+            "unverified", "1.0.3", None, [], "no installed SMIA metadata"
+        ),
+    )
+
+    result = _invoke(["smia", "--lang", "en"])
+
+    assert result.exit_code == 0
+    text = _text(result)
+    assert "Status: unverified" in text
+    assert "basyx pin: unknown" in text
+
+
+def test_smia_command_missing_file_is_exit_1(tmp_path: Path) -> None:
+    result = _invoke(["smia", str(tmp_path / "missing.aasx"), "--lang", "en"])
+
+    assert result.exit_code == 1
+    assert "File not found" in _text(result)
+
+
+def test_smia_invalid_language_is_exit_2_from_the_catalog(tmp_path: Path) -> None:
+    expected = i18n.translate(
+        "error.unsupported_language",
+        i18n.default_language(),
+        value="fr",
+        supported=", ".join(i18n.SUPPORTED_LANGUAGES),
+    )
+
+    result = _invoke(["smia", "--lang", "fr"])
+
+    assert result.exit_code == 2
+    assert expected in _text(result)
+
+
+def test_update_command_offline_is_exit_0(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    from aas_bridge.cli import actions
+
+    def offline() -> object:
+        raise ProbeError("Cannot reach GitHub (timed out)")
+
+    registry = tmp_path / "registry"
+    monkeypatch.setattr(actions, "fetch_official_releases", offline)
+    monkeypatch.setattr(actions, "resolve_registry_dir", lambda: registry)
+
+    result = _invoke(["update", "--lang", "en"])
+
+    assert result.exit_code == 0
+    text = _text(result)
+    assert "offline — degraded" in text
+    assert "skipped (offline)" in text
+    assert (registry / "manifest.json").is_file()
+
+
+def test_update_command_unwritable_registry_is_exit_4(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    from aas_bridge.cli import actions
+
+    blocker = tmp_path / "blocker"
+    blocker.write_text("not a directory", encoding="utf-8")
+    monkeypatch.setattr(actions, "resolve_registry_dir", lambda: blocker / "registry")
+
+    result = _invoke(["update", "--lang", "en"])
+
+    assert result.exit_code == 4
+    assert "Cannot create the registry directory" in _text(result)
+
+
+def test_iss011_usage_message_lives_in_both_locales() -> None:
+    for language in i18n.SUPPORTED_LANGUAGES:
+        assert i18n.MESSAGES["error.unsupported_language"][language].strip()
+
+    expected = i18n.translate(
+        "error.unsupported_language",
+        i18n.default_language(),
+        value="xx",
+        supported=", ".join(i18n.SUPPORTED_LANGUAGES),
+    )
+    result = _invoke(["check", "file.aasx", "--lang", "xx"])
+
+    assert result.exit_code == 2
+    assert expected in _text(result)
+
+
+def test_iss012_unwritable_report_keeps_exit_3_and_notes_the_failure(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    blocker = tmp_path / "blocker"
+    blocker.write_text("not a directory", encoding="utf-8")
+    unwritable = blocker / "report.json"
+    seen: dict[str, Any] = {}
+
+    def fake_migration(
+        source: Path, report_path: Path | None = None, **kwargs: Any
+    ) -> MigrationOutcome:
+        seen["report_path"] = report_path
+        error = EvidenceGateError("target load differs from the baseline")
+        error.report = _report()  # type: ignore[attr-defined]
+        raise error
+
+    monkeypatch.setattr(cli, "run_migration", fake_migration)
+
+    result = _invoke(
+        [
+            "migrate",
+            str(_package(tmp_path)),
+            "--lang",
+            "en",
+            "--report",
+            str(unwritable),
+        ]
+    )
+
+    assert result.exit_code == 3
+    text = _text(result)
+    assert "Evidence gate failed" in text
+    assert "The report could not be written to" in text
+    assert "Migration refused" not in text
+    assert seen["report_path"] != unwritable
+
+
+def test_iss012_unwritable_report_on_success_is_exit_1_with_note(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    blocker = tmp_path / "blocker"
+    blocker.write_text("not a directory", encoding="utf-8")
+    unwritable = blocker / "report.json"
+
+    def fake_migration(
+        source: Path, report_path: Path | None = None, **kwargs: Any
+    ) -> MigrationOutcome:
+        return MigrationOutcome(
+            status="emitted", report=_report(), output_path=tmp_path / "package-adapted.aasx"
+        )
+
+    monkeypatch.setattr(cli, "run_migration", fake_migration)
+
+    result = _invoke(
+        [
+            "migrate",
+            str(_package(tmp_path)),
+            "--lang",
+            "en",
+            "--report",
+            str(unwritable),
+        ]
+    )
+
+    assert result.exit_code == 1
+    text = _text(result)
+    assert "Status: migrated" in text
+    assert "The report could not be written to" in text
