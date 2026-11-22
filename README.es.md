@@ -1,12 +1,8 @@
 <div align="center">
 
-<!-- Espacio reservado para la figura: descomentar cuando existan docs/assets/readme-hero-light.webp y -dark.webp.
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="docs/assets/readme-hero-dark.webp">
-  <source media="(prefers-color-scheme: light)" srcset="docs/assets/readme-hero-light.webp">
-  <img src="docs/assets/readme-hero-light.webp" alt="Flujo de AAS Bridge: detecta AAS 3.0, ejecuta la puerta de evidencia y emite un paquete AAS 3.1 adaptado" width="100%">
-</picture>
--->
+<!-- Banners para modo claro y oscuro. -->
+<img src="images/AAS_bridge_logo_light.jpg#gh-light-mode-only" alt="Logotipo de AAS Bridge" width="100%">
+<img src="images/AAS_bridge_logo_dark.jpg#gh-dark-mode-only" alt="Logotipo de AAS Bridge" width="100%">
 
 <h1>AAS Bridge</h1>
 

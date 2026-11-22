@@ -1,12 +1,8 @@
 <div align="center">
 
-<!-- Hero image slot: uncomment when docs/assets/readme-hero-light.webp and -dark.webp exist.
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="docs/assets/readme-hero-dark.webp">
-  <source media="(prefers-color-scheme: light)" srcset="docs/assets/readme-hero-light.webp">
-  <img src="docs/assets/readme-hero-light.webp" alt="AAS Bridge flow: detect AAS 3.0, run the evidence gate, emit an adapted AAS 3.1 package" width="100%">
-</picture>
--->
+<!-- Theme-specific banners: light and dark. -->
+<img src="images/AAS_bridge_logo_light.jpg#gh-light-mode-only" alt="AAS Bridge logo" width="100%">
+<img src="images/AAS_bridge_logo_dark.jpg#gh-dark-mode-only" alt="AAS Bridge logo" width="100%">
 
 <h1>AAS Bridge</h1>
 
