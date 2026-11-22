@@ -49,6 +49,10 @@ fichero que no puede demostrar.
 ¿Nuevo en AAS? Empieza por el [metamodelo AAS de IDTA](https://github.com/admin-shell-io/aas-specs-metamodel)
 y el [SDK Python de Eclipse BaSyx](https://github.com/eclipse-basyx/basyx-python-sdk).
 
+**SMIA** (Self-configurable Manufacturing Industrial Agents) es un gemelo digital de
+código abierto, conforme a AAS y basado en agentes, para fabricación. AAS Bridge proporciona soporte para SMIA. Para más información sobre este software,
+consulta la [documentación de SMIA](https://smia.readthedocs.io/).
+
 ## Inicio rápido
 
 ### Requisitos
@@ -182,9 +186,8 @@ evidencia de que el modelo sobrevivió.
 | **Offline-first** | `check`, `migrate` con bases cacheadas, la guía de SMIA instalada y el shell funcionan offline. Las funciones online degradan de forma visible, nunca silenciosa. |
 | **basyx es el único validador** | AAS Bridge no aprende ningún metamodelo propio; el SDK del dialecto de destino instalado decide qué es válido. |
 
-**Para quién es:** usuarios de SMIA (el runtime AAS para el que se construyó esta
-herramienta), integradores de AAS que mantienen fábricas con versiones mixtas y
-autores de toolchains que necesitan conversiones auditables.
+**Para quién es:** usuarios de SMIA, integradores de AAS que mantienen fábricas con
+versiones mixtas y autores de toolchains que necesitan conversiones auditables.
 
 **No es un conversor genérico:** AAS Bridge es un motor de reglas por par de
 versiones, aprobadas por humanos. AAS 2.0 ↔ 3.x y las conversiones entre
@@ -588,7 +591,8 @@ se atribuyen en el `manifest.json` generado.
 
 ## Agradecimientos
 
-AAS Bridge está construido para el runtime SMIA y se apoya en el
+AAS Bridge proporciona soporte para el software
+[SMIA](https://github.com/ekhurtado/SMIA) y se apoya en el
 [SDK Python de Eclipse BaSyx](https://github.com/eclipse-basyx/basyx-python-sdk) y el
 [metamodelo AAS de IDTA](https://github.com/admin-shell-io/aas-specs-metamodel).
 [AASX Package Explorer](https://github.com/eclipse-aaspe/package-explorer) sigue siendo

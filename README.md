@@ -50,6 +50,10 @@ transformation, and refuses to emit a file it cannot prove.
 New to AAS? Start with the [IDTA AAS metamodel](https://github.com/admin-shell-io/aas-specs-metamodel)
 and the [Eclipse BaSyx Python SDK](https://github.com/eclipse-basyx/basyx-python-sdk).
 
+**SMIA** (Self-configurable Manufacturing Industrial Agents) is an open-source,
+AAS-compliant, agent-based digital twin for manufacturing. AAS Bridge provides support for SMIA. For more information about this software, see the
+[SMIA documentation](https://smia.readthedocs.io/).
+
 [//]: # (Las secciones comentadas no se consideran actualmente imprescindibles en el README, y se quiere dejar un fichero simple y claro, para que sea mas atractivo. Sin embargo, para no perder el contenido, no se han eliminado, si no solamente comentado)
 
 ## Quick start
@@ -208,9 +212,8 @@ model survived.
 | **Offline-first** | `check`, `migrate` with cached baselines, installed-SMIA guidance and the shell work offline. Online features degrade visibly, never silently. |
 | **basyx is the only validator** | AAS Bridge learns no metamodel of its own; the installed target-dialect SDK decides what is valid. |
 
-**Who it's for:** SMIA users (the AAS runtime this tool was built for), AAS
-integrators maintaining mixed-version factories, and toolchain authors who need
-auditable conversions.
+**Who it's for:** SMIA users, AAS integrators maintaining mixed-version factories,
+and toolchain authors who need auditable conversions.
 
 **Not a generic converter:** AAS Bridge is a per-pair, human-approved rule engine.
 AAS 2.0 ↔ 3.x and sub-version conversions are out of scope (see
@@ -799,7 +802,8 @@ attributed in the generated `manifest.json`.
 
 ## Acknowledgements
 
-AAS Bridge is built for the SMIA runtime and stands on the
+AAS Bridge provides support for the
+[SMIA](https://github.com/ekhurtado/SMIA) software and stands on the
 [Eclipse BaSyx Python SDK](https://github.com/eclipse-basyx/basyx-python-sdk) and the
 [IDTA AAS metamodel](https://github.com/admin-shell-io/aas-specs-metamodel).
 [AASX Package Explorer](https://github.com/eclipse-aaspe/package-explorer) remains the
